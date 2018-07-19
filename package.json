@@ -52,6 +52,7 @@
     ]
   },
   "dependencies": {
+    "d3": "^5.5.0",
     "spinal-models-context_studio": "git+https://github.com/spinalcom/spinal-models-context_studio.git"
   },
   "homepage": "https://github.com/spinalcom/spinal-env-viewer-plugin-context_studio#readme"

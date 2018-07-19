@@ -1,10 +1,10 @@
 <script>
 import Vue from "vue";
 import contextStudio from "./contextStudio.vue"
+import contextManager from "./manager/contextManager.vue"
 const ComponentCtor1 = Vue.extend(contextStudio);
-
+const ComponentCtor2 = Vue.extend(contextManager);
 const ClassName = "contextStudio";
-
 const globalType = typeof window === "undefined" ? global : window;
 const spinalSystem = globalType.spinal.spinalSystem;
 
@@ -12,13 +12,16 @@ const PanelTitle1 = "Context Studio";
 const ButtonLabel1 = "Context Studio";
 const ButtonIcon1 = "description";
 
+const PanelTitle2 = "Context Manager";
+const ButtonLabel2 = "Context Manager";
+const ButtonIcon2 = "bookmarks";
 
 const classExtention = class {
   constructor(viewer, options) {
     Autodesk.Viewing.Extension.call(this, viewer, options);
     this.viewer = viewer;
     this.panel1 = null;
-    this.show = false;
+    this.panel2 = null;
   }
   load() {
     if (this.viewer.toolbar) {
@@ -54,27 +57,30 @@ const classExtention = class {
       "contextStudio"
     );
 
+      this.panel2 = new PanelClass(this.viewer, PanelTitle2);
+    globalType.spinal.panelManager.registerPanel(
+      this.panel2,
+      "contextManager"
+    );
+
 
     var button1 = new Autodesk.Viewing.UI.Button(ButtonLabel1);
     globalType.spinal.panelManager.registerButton(button1, "contextStudio");
-
- 
     button1.container.style.color = "red";
     var icon = button1.container.firstChild;
     icon.className = "adsk-button-icon md-icon md-icon-font md-theme-default";
     icon.innerHTML = ButtonIcon1;
     button1.setToolTip(ButtonLabel1);
 
-   
 
-    this.subToolbar = this.viewer.toolbar.getControl("spinalcom");
-    if (!this.subToolbar) {
-      this.subToolbar = new Autodesk.Viewing.UI.ControlGroup("spinalcom");
-      this.viewer.toolbar.addControl(this.subToolbar);
-    }
-    // this.subToolbar.addControl(button1);
-    this.subToolbar.addClass("bkcolor");
-    // this.subToolbar.addControl(button2);
+    var button2 = new Autodesk.Viewing.UI.Button(ButtonLabel2);
+    globalType.spinal.panelManager.registerButton(button2, "contextManager");
+    button2.container.style.color = "red";
+    var icon = button2.container.firstChild;
+    icon.className = "adsk-button-icon md-icon md-icon-font md-theme-default";
+    icon.innerHTML = ButtonIcon2;
+    button2.setToolTip(ButtonLabel2);
+  
     this.initialize();
   }
   initialize() {
@@ -84,6 +90,13 @@ const classExtention = class {
     _container1.style.overflowY = "auto";
     this.panel1.container.appendChild(_container1);
     new ComponentCtor1().$mount(_container1);
+
+      var _container2 = document.createElement("div");
+    _container2.className = this.panel2.container.id + "-pannelcontainer";
+    _container2.style.height = "calc(200% - 45px)";
+    _container2.style.overflowY = "auto";
+    this.panel2.container.appendChild(_container2);
+    new ComponentCtor2().$mount(_container2);
   }
 
 };

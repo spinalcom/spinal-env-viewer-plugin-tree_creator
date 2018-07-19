@@ -1,0 +1,77 @@
+<template>
+  <md-content class='contextList md-scrollbar'>
+    <md-list>
+      <md-list-item v-for="(context,index) in contextArray"
+                    :key="context.name.get()+'-'+index">
+        <context :context="context"></context>
+        <md-divider></md-divider>
+      </md-list-item>
+    </md-list>
+  </md-content>
+</template>
+
+<script>
+const globalType = typeof window === "undefined" ? global : window;
+var spinalSystem;
+var viewer;
+var EventBus;
+import context from "./context.vue";
+export default {
+  name: "contextList",
+  data() {
+    return {
+      contextArray: []
+    };
+  },
+  props: ["contextList"],
+  components: {
+    context
+  },
+  watch :{
+    contextList : function(newContextList,oldContextList){
+      if(oldContextList == null && newContextList != null){
+      this.linkToDB()
+      }
+  }},
+  methods: {
+    updateArray: function() {
+      this.contextArray = [];
+      for (
+        let index = 0;
+        index < this.contextList.length;
+        index++
+      ) {
+        const element = this.contextList[index];
+        this.contextArray.push(element)
+      }
+    },
+    // onModelChange() {
+    //   this.updateArray();
+    // },
+    getEvents: function() {},
+    linkToDB: function() {
+      this.contextList.bind(this.updateArray)
+    }
+  },
+
+  mounted() {
+    spinalSystem = globalType.spinal.spinalSystem;
+    viewer = globalType.v;
+    EventBus = globalType.spinal.eventBus;
+    // this.linkToDB();
+    this.getEvents();
+  }
+};
+</script>
+
+<style scoped>
+.contextList {
+  overflow-y: auto;
+  height: calc(100% - 40px);
+  width: calc(100% - 10px);
+}
+</style>
+
+
+
+
