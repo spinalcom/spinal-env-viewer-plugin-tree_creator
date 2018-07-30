@@ -1,9 +1,12 @@
 <script>
 import Vue from "vue";
-import contextStudio from "./contextStudio.vue"
-import contextManager from "./manager/contextManager.vue"
+import contextStudio from "./contextStudio.vue";
+import contextManager from "./manager/contextManager.vue";
+// import appVisualizer from "./apps-visualizer/appVisualizer.vue";
 const ComponentCtor1 = Vue.extend(contextStudio);
 const ComponentCtor2 = Vue.extend(contextManager);
+// const ComponentCtor3 = Vue.extend(appVisualizer);
+
 const ClassName = "contextStudio";
 const globalType = typeof window === "undefined" ? global : window;
 const spinalSystem = globalType.spinal.spinalSystem;
@@ -34,7 +37,6 @@ const classExtention = class {
       );
     }
 
-
     return true;
   }
   onToolbarCreated() {
@@ -52,17 +54,10 @@ const classExtention = class {
   // This function is to create your button on viewer, it used autodesk forge api
   createUI() {
     this.panel1 = new PanelClass(this.viewer, PanelTitle1);
-    globalType.spinal.panelManager.registerPanel(
-      this.panel1,
-      "contextStudio"
-    );
+    globalType.spinal.panelManager.registerPanel(this.panel1, "contextStudio");
 
-      this.panel2 = new PanelClass(this.viewer, PanelTitle2);
-    globalType.spinal.panelManager.registerPanel(
-      this.panel2,
-      "contextManager"
-    );
-
+    this.panel2 = new PanelClass(this.viewer, PanelTitle2);
+    globalType.spinal.panelManager.registerPanel(this.panel2, "contextManager");
 
     var button1 = new Autodesk.Viewing.UI.Button(ButtonLabel1);
     globalType.spinal.panelManager.registerButton(button1, "contextStudio");
@@ -72,7 +67,6 @@ const classExtention = class {
     icon.innerHTML = ButtonIcon1;
     button1.setToolTip(ButtonLabel1);
 
-
     var button2 = new Autodesk.Viewing.UI.Button(ButtonLabel2);
     globalType.spinal.panelManager.registerButton(button2, "contextManager");
     button2.container.style.color = "red";
@@ -80,7 +74,7 @@ const classExtention = class {
     icon.className = "adsk-button-icon md-icon md-icon-font md-theme-default";
     icon.innerHTML = ButtonIcon2;
     button2.setToolTip(ButtonLabel2);
-  
+
     this.initialize();
   }
   initialize() {
@@ -91,14 +85,13 @@ const classExtention = class {
     this.panel1.container.appendChild(_container1);
     new ComponentCtor1().$mount(_container1);
 
-      var _container2 = document.createElement("div");
+    var _container2 = document.createElement("div");
     _container2.className = this.panel2.container.id + "-pannelcontainer";
     _container2.style.height = "calc(200% - 45px)";
     _container2.style.overflowY = "auto";
     this.panel2.container.appendChild(_container2);
     new ComponentCtor2().$mount(_container2);
   }
-
 };
 export default new class {
   constructor() {

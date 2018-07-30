@@ -1,28 +1,21 @@
 
 <template>
-  <md-content class="contextManager">
+  <md-content class="appsVisualizer">
 
     <md-content class='mainButtons'>
 
-      <dialog-custom :graph="graph"
-                     :showDialog="showDialog"
-                     @change="showDialog = $event"></dialog-custom>
+      <!-- <dialog-apps-visualizer :graph="graph"
+                              :showDialog="showDialog"
+                              @change="showDialog = $event"></dialog-apps-visualizer> -->
       <md-button @click="showDialog = true"
                  class="md-icon-button">
         <md-icon>add</md-icon>
       </md-button>
 
-      <md-button @click="editMode = !editMode"
-                 class="md-icon-button"
-                 v-bind:class="{ editModeStyle: editMode }">
-        <md-icon>edit</md-icon>
-      </md-button>
-
     </md-content>
 
-    <shared-tool-bar-context></shared-tool-bar-context>
-    <context-list :contextList="contextList"
-                  :editMode="editMode"></context-list>
+    <!-- <shared-tool-bar-apps></shared-tool-bar-apps> -->
+    <!-- <apps-list :appsList="appsList"></apps-list> -->
 
   </md-content>
 </template>
@@ -32,21 +25,22 @@ const globalType = typeof window === "undefined" ? global : window;
 var spinalSystem;
 var viewer;
 var EventBus;
-import contextList from "./contextList.vue";
-import DialogCustom from "./DialogCustom.vue";
-import sharedToolBarContext from "./sharedToolBarContext.vue";
+// import appsList from "./appsList.vue";
+// import DialogAppsVisualizer from "./DialogAppsVisualizer.vue";
+// import sharedToolBarApps from "./sharedToolBarApps.vue";
 export default {
-  name: "contextManager",
+  name: "appsVisualizer",
   data() {
     return {
-      contextList: null,
+      appsList: null,
+      appsArray: [],
       inc: 0,
       showDialog: false,
       graph: null,
       editMode: false
     };
   },
-  components: { contextList, sharedToolBarContext, DialogCustom },
+  // components: { appsList, sharedToolBarApps, DialogAppsVisualizer },
   methods: {
     getEvents: function() {},
     linkToDB: function() {
@@ -56,10 +50,7 @@ export default {
           typeof globalType.spinal.contextStudio.graph != "undefined"
         ) {
           this.graph = globalType.spinal.contextStudio.graph;
-          // if (typeof this.graph.appsListByType.context !== "undefined")
-          //   this.contextList = this.graph.appsListByType.context;
-          if (typeof this.graph.appsList !== "undefined")
-            this.contextList = this.graph.appsList;
+
           clearInterval(interval);
         }
       }, 500);
@@ -76,28 +67,28 @@ export default {
 </script>
 
 <style scoped>
-.contextManager {
+.appsVisualizer {
   height: calc(100% - 35px);
 }
 </style>
 
 <style  >
-.contextManager button.md-icon-button.md-button.md-theme-default {
+.appsVisualizer button.md-icon-button.md-button.md-theme-default {
   min-width: 20px;
   width: 20px;
   height: 20px;
 }
 
-.contextManager .md-toolbar {
+.appsVisualizer .md-toolbar {
   height: 20px;
   min-height: 20px;
 }
 
-.contextManager .md-title {
+.appsVisualizer .md-title {
   font-size: 15px;
 }
 
-.contextManager .md-list,
+.appsVisualizer .md-list,
 .md-list *,
 .md-button,
 .md-button * {
@@ -109,15 +100,15 @@ export default {
   padding-left: 0px;
 }
 
-.contextManager i.md-icon.md-icon-font.md-theme-default {
+.appsVisualizer i.md-icon.md-icon-font.md-theme-default {
   font-size: 18px !important;
 }
 
-.contextManager span {
+.appsVisualizer span {
   font-size: 14px;
 }
 
-.contextManager .md-ripple.md-list-item-content {
+.appsVisualizer .md-ripple.md-list-item-content {
   min-height: 0px;
   font-size: 14px;
   box-sizing: border-box;
@@ -127,8 +118,5 @@ export default {
   min-height: 0px;
   font-size: 14px;
   box-sizing: border-box;
-}
-.editModeStyle {
-  background-color: #356bab;
 }
 </style>

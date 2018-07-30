@@ -11,7 +11,6 @@ import * as d3 from "d3";
 import { SpinalGraph} from "spinal-models-context_studio";
 var globalType = typeof window === "undefined" ? global : window;
 var spinalSystem;
-console.log(d3);
 
    
 
@@ -128,7 +127,7 @@ var node = svg.append("g")
 
   var circles = node.append("circle")
       .attr("r", function(d){return depth(d.depth)})
-      .attr("fill", function(d) {  let test = color(d.group); console.log(test); return test })
+      .attr("fill", function(d) {  let test = color(d.group); return test })
       .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)

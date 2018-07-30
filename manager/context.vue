@@ -12,22 +12,55 @@
         <span style="flex: 1"
               class="md-title">{{context.name.get()}}</span>
 
-        <md-button @click.stop="onAddcontextElement"
-                   class="md-icon-button"
-                   md-menu-trigger>
-          <md-icon>add</md-icon>
-        </md-button>
+        <md-menu v-if="editMode"
+                 md-direction="bottom-start">
+          <md-button class="md-icon-button"
+                     md-menu-trigger>
+            <md-icon>add</md-icon>
+          </md-button>
+
+          <md-menu-content class="small-menu">
+            <md-menu-item v-for="(model,index) in models"
+                          :key="model.type+'-'+index"
+                          @click.stop="onAddContextElement(model)">
+              {{model.type}}
+            </md-menu-item>
+
+          </md-menu-content>
+        </md-menu>
+
+        <md-menu v-else
+                 md-direction="bottom-start">
+          <md-button class="md-icon-button"
+                     md-menu-trigger>
+            <md-icon>more_horiz</md-icon>
+          </md-button>
+
+          <md-menu-content class="small-menu">
+            <md-menu-item>
+              test
+            </md-menu-item>
+
+            <md-menu-item>
+              test2
+            </md-menu-item>
+
+          </md-menu-content>
+        </md-menu>
 
       </md-list-item>
     </md-list>
-
-    <span style="flex: 1"
-          v-show="show"
-          class="md-title">{{context.name.get()}}</span>
-
-    <!-- <context-elements-forest 
-                             v-if="contextElementsForest!=null"
-                             :contextElementsForest="contextElementsForest"></context-elements-forest> -->
+    <md-list v-show="show">
+      <md-list-item class="test3"
+                    @click="test"
+                    v-for="(node,index) in nodeArray"
+                    :key="node.name.get()+'-'+index">
+        <spinal-node style=" padding-left: 5px; !important"
+                     :node="node"
+                     :context="context"
+                     :editMode="editMode"></spinal-node>
+      </md-list-item>
+    </md-list>
 
   </md-content>
 </template>
@@ -36,28 +69,40 @@
 const globalType = typeof window === "undefined" ? global : window;
 
 var EventBus;
-// import contextElementsForest from "./contextElementsForest.vue";
+import spinalNode from "./spinalNode.vue";
 export default {
   name: "context",
   data() {
     return {
-      contextElementsForest: null,
-      // contextName: null,
+      nodeArray: [],
       show: false,
       isSelected: false
     };
   },
-  props: ["context"],
-  // watch:{context:function(newContext,oldContext){
-  //  if(newContext != null){
-  //  this.linkToDB()
-  // console.log('test');
-  
-  //  }
-  // }},
-  //contextElementsForest
-  components: {  },
+  computed: {
+    models: function() {
+      let res = [];
+      for (let index = 0; index < this.context.models.length; index++) {
+        const model = this.context.models[index];
+        if (model.base.get() != "BIMElement") {
+          res.push(model.get());
+        }
+      }
+      return res;
+    }
+  },
+  props: ["context", "editMode"],
+  // watch: {
+  //   context: function(newContext, oldContext) {
+  //     if ((newContext != null, oldContext == null)) {
+  //       this.linkToDB();
+  //       console.log("test");
+  //     }
+  //   }
+  // },
+  components: { spinalNode },
   methods: {
+    test: function() {},
     sendContext: function() {
       EventBus.$emit("contextContext", this);
       this.isSelected = true;
@@ -65,31 +110,75 @@ export default {
     deselect: function() {
       this.isSelected = false;
     },
+    getModel: function(modelType) {
+      for (let index = 0; index < this.context.models.length; index++) {
+        const element = this.context.models[index];
+        if (element.type.get() === modelType) return element;
+      }
+    },
     getEvents: function() {},
     promiseLoad(_ptr) {
       return new Promise(resolve => {
         _ptr.load(resolve);
       });
     },
-    onAddcontextElement: function() {
-      // if (this.contextElementsForest != null) {
-      //   this.contextElementsForest.addTree();
-      // }
-      // this.show = true;
-      console.log('test');
-      
+    incrementNameId(model) {
+      model.nameCount.set(model.nameCount.get() + 1);
+      return model.nameCount.get();
     },
-    // updateData:function(){
-    //  this.contextName = this.context.name.get()
-    // },
-    // linkToDB: function() {
-    //   this.context.bind(this.updateData)
-    // }
+    onAddContextElement: function(model) {
+      let newElement = null;
+      let sModel = this.getModel(model.type);
+      let modelBase = sModel.base.get();
+      let contextName = this.context.name.get();
+      if (modelBase === "BIMElement") {
+        newElement = new globalType.spinalCore._def[modelBase](
+          0,
+          model.type + this.incrementNameId(sModel),
+          model.type
+        );
+      } else {
+        newElement = new globalType.spinalCore._def[modelBase](
+          model.type + this.incrementNameId(sModel),
+          model.type
+        );
+      }
+      let newNode = this.context.startingNode.addToExistingRelationByApp(
+        contextName,
+        "has",
+        newElement,
+        true
+      ).node;
+      if (newNode != null) newNode.addType(contextName, model.type);
 
+      this.show = true;
+    },
+    linkToDB: function() {
+      let charac = this.context.getCharacteristicElement();
+      charac.bind(this.updateData);
+    },
+    updateData: function() {
+      this.nodeArray = [];
+      let relations = this.context.startingNode.getRelationsByApp(this.context);
+      for (let index = 0; index < relations.length; index++) {
+        const relation = relations[index];
+        this.nodeArray = this.nodeArray.concat(
+          this.context.startingNode.getChildrenByAppByRelation(
+            this.context,
+            relation
+          )
+        );
+      }
+      // this.nodeArray = this.context.startingNode.getChildrenByAppByRelation(
+      //   this.context.name.get(),
+      //   "has"
+      // );
+    }
   },
   mounted() {
-    EventBus =globalType.spinal.eventBus;
+    EventBus = globalType.spinal.eventBus;
     this.getEvents();
+    this.linkToDB();
   }
 };
 </script>
@@ -98,20 +187,16 @@ export default {
 .context {
   width: 100%;
 }
-.context > ul {
+.context > ul:first-child {
   background-color: black;
 }
 
-.contextSelect > ul {
-  background-color: rgba(54, 206, 8, 0.5);
+.contextSelect > ul:first-child {
+  background-color: #2d3d93;
+}
+.test3 {
+  border-right: 2px solid black !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+  border-left: 2px solid black !important;
 }
 </style>
-
-
-
-
-
-
-
-
-

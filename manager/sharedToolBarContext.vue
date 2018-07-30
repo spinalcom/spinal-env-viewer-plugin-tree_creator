@@ -33,29 +33,30 @@ export default {
       preSelected: null,
       disableSelection: false,
       endpointSelector: null
-          };
+    };
   },
   components: {},
   methods: {
-    onRemove: function() {
-     
-    },
+    onRemove: function() {},
     getEvents: function() {
       EventBus.$on("contextContext", _self => {
-      if (typeof _self._data.context != null) {
-
-        if (this.preSelected != null) this.preSelected.deselect();
+        if (_self.context != null) {
+          if (this.preSelected != null) this.preSelected.deselect();
           this.preSelected = _self;
           this.self = _self.context;
-          console.log('test2');
-          
-  
-          
-      this.name = this.self.name.get();
-      }
-
+          this.name = this.self.name.get();
+        }
       });
-    },
+
+      EventBus.$on("nodeContext", _self => {
+        if (_self.node != null) {
+          if (this.preSelected != null) this.preSelected.deselect();
+          this.preSelected = _self;
+          this.self = _self.node;
+          this.name = this.self.name.get();
+        }
+      });
+    }
   },
   mounted() {
     globalType = typeof window === "undefined" ? global : window;
@@ -82,15 +83,10 @@ export default {
   padding: 0px;
 }
 .sharedToolBarContext > ul > li > div > div {
-  background-color: rgba(54, 206, 8, 0.5);
+  background-color: #2d3d93;
 }
 .sharedToolBarContext > div > ul > li > div > div {
   padding: 0px;
   padding-left: 8px;
 }
 </style>
-
-
-
-
-

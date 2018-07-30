@@ -1,11 +1,11 @@
 <template>
-  <md-content class='contextList md-scrollbar'>
+  <md-content class='appsList md-scrollbar'>
     <md-list>
       <md-list-item @click="test"
-                    v-for="(context,index) in contextArray"
-                    :key="context.name.get()+'-'+index">
-        <context :context="context"
-                 :editMode="editMode"></context>
+                    v-for="(app,index) in appArray"
+                    :key="app.name.get()+'-'+index">
+        <app :app="app"
+             :editMode="editMode"></app>
         <md-divider></md-divider>
       </md-list-item>
     </md-list>
@@ -17,20 +17,20 @@ const globalType = typeof window === "undefined" ? global : window;
 var spinalSystem;
 var viewer;
 var EventBus;
-import context from "./context.vue";
+import app from "./app.vue";
 export default {
-  name: "contextList",
+  name: "appsList",
   data() {
     return {
-      contextArray: []
+      appArray: []
     };
   },
-  props: ["contextList", "editMode"],
+  props: ["appsList", "editMode"],
   components: {
-    context
+    app
   },
   watch: {
-    contextList: function(newContextList, oldContextList) {
+    appsList: function(newContextList, oldContextList) {
       if (oldContextList == null && newContextList != null) {
         this.linkToDB();
       }
@@ -39,17 +39,15 @@ export default {
   methods: {
     test: function() {},
     updateArray: function() {
-      this.contextArray = [];
+      this.appArray = [];
       for (
         let index = 0;
-        index < this.contextList._attribute_names.length;
+        index < this.appsList._attribute_names.length;
         index++
       ) {
-        const element = this.contextList[
-          this.contextList._attribute_names[index]
-        ];
-        element.load(context => {
-          this.contextArray.push(context);
+        const element = this.appsList[this.appsList._attribute_names[index]];
+        element.load(app => {
+          this.appArray.push(app);
         });
       }
     },
@@ -58,7 +56,7 @@ export default {
     // },
     getEvents: function() {},
     linkToDB: function() {
-      this.contextList.bind(this.updateArray);
+      this.appsList.bind(this.updateArray);
     }
   },
 
@@ -73,7 +71,7 @@ export default {
 </script>
 
 <style scoped>
-.contextList {
+.appsList {
   overflow-y: auto;
   height: calc(100% - 40px);
   width: calc(100% - 10px);
