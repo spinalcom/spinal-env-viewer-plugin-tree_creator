@@ -167,15 +167,19 @@ export default {
     },
     updateData: function() {
       this.nodeArray = [];
-      let relations = this.context.startingNode.getRelationsByApp(this.context);
-      for (let index = 0; index < relations.length; index++) {
-        const relation = relations[index];
-        this.nodeArray = this.nodeArray.concat(
-          this.context.startingNode.getChildrenByAppByRelation(
-            this.context,
-            relation
-          )
+      if (typeof this.context.startingNode != "undefined") {
+        let relations = this.context.startingNode.getRelationsByApp(
+          this.context
         );
+        for (let index = 0; index < relations.length; index++) {
+          const relation = relations[index];
+          this.nodeArray = this.nodeArray.concat(
+            this.context.startingNode.getChildrenByAppByRelation(
+              this.context,
+              relation
+            )
+          );
+        }
       }
       // this.nodeArray = this.context.startingNode.getChildrenByAppByRelation(
       //   this.context.name.get(),
