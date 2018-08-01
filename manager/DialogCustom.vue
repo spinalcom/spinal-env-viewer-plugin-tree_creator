@@ -33,6 +33,10 @@
                   </md-option>
                 </md-select>
               </md-field>
+              <md-field class="small-field">
+                <label>Properties</label>
+                <md-input v-model="properties"></md-input>
+              </md-field>
             </div>
 
             <div class="md-layout-item">
@@ -144,7 +148,9 @@ export default {
     interactionsArray: [
       { modelA: "modelA", relation: "relation", modelB: "modelB" }
     ],
-    dragOverStyle: false
+    propertiesArray: [],
+    dragOverStyle: false,
+    properties: ""
   }),
   components: { interaction },
   props: ["showDialog", "graph"],
@@ -173,9 +179,24 @@ export default {
       this.$emit("change", bool);
     },
     test: function() {
-      this.models.push({ type: this.type, base: this.base, nameCount: 0 });
+      let obj = {
+        type: this.type,
+        base: this.base,
+        nameCount: 0
+      };
+      if (this.properties != "") {
+        this.parseProperties();
+        console.log(this.propertiesArray);
+
+        obj.properties = this.propertiesArray;
+      }
+
+      this.models.push(obj);
       this.type = "";
       this.base = "";
+      this.properties = "";
+      this.propertiesArray = [];
+      console.log(obj.properties);
     },
     drag: function(evt) {
       evt.dataTransfer.setData("model", "test2");
@@ -203,6 +224,8 @@ export default {
       this.update(false);
       let newInteractionsObj = this.interactionsObj();
       let newRelations = this.relations();
+      console.log(this.models);
+
       this.graph.getContext(
         this.contextName,
         newRelations,
@@ -214,6 +237,19 @@ export default {
         { modelA: "modelA", relation: "relation", modelB: "modelB" }
       ];
       this.contextName = "";
+    },
+    parseProperties: function() {
+      // this.propertiesArray[this.type] = {};
+      let props = this.properties.split("==");
+      // console.log(props);
+      if (props.length > 1) {
+        let t = [];
+        t.push(props[0].trim());
+        t.push(props[1].trim());
+        this.propertiesArray.push(t);
+      }
+
+      // console.log(this.propertiesArray);
     }
   },
   computed: {

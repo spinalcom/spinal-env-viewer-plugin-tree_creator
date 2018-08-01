@@ -5,7 +5,7 @@
                     v-for="(context,index) in contextArray"
                     :key="context.name.get()+'-'+index">
         <context :context="context"
-                 :editMode="editMode"></context>
+                 :editMode="editMode&&context.type.get()==='context'"></context>
         <md-divider></md-divider>
       </md-list-item>
     </md-list>

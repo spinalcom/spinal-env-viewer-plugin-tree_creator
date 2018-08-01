@@ -38,11 +38,15 @@
 
           <md-menu-content class="small-menu">
             <md-menu-item>
-              test
+              <md-button @click='print'
+                         class="md-icon-button">
+                <md-icon>print</md-icon>
+              </md-button>
             </md-menu-item>
 
             <md-menu-item>
-              test2
+              <md-checkbox v-model="t1"
+                           class="md-primary">relation</md-checkbox>
             </md-menu-item>
 
           </md-menu-content>
@@ -76,7 +80,8 @@ export default {
     return {
       nodeArray: [],
       show: false,
-      isSelected: false
+      isSelected: false,
+      t1: true
     };
   },
   computed: {
@@ -102,6 +107,9 @@ export default {
   // },
   components: { spinalNode },
   methods: {
+    print: function() {
+      console.log(this.context);
+    },
     test: function() {},
     sendContext: function() {
       EventBus.$emit("contextContext", this);

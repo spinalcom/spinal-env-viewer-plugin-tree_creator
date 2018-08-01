@@ -5,7 +5,7 @@
     <md-list class="test2"
              @click="sendNode">
       <md-list-item>
-        <md-button v-if="addActive && !nodeArrayEmpty"
+        <md-button v-if="node.hasChildren(context.name.get())"
                    class="md-icon-button test"
                    @click.stop="show = !show">
           <md-icon v-if="show">arrow_drop_down</md-icon>
@@ -50,8 +50,8 @@
               print
             </md-menu-item>
 
-            <md-menu-item>
-              test2
+            <md-menu-item @click="isolate">
+              Isolate
             </md-menu-item>
 
           </md-menu-content>
@@ -95,6 +95,7 @@ export default {
     addActive: function() {
       if (
         typeof this.node.type != "undefined" &&
+        typeof this.node.type[this.context.name.get()] != "undefined" &&
         typeof this.context.interactions[
           this.node.type[this.context.name.get()].get()
         ] != "undefined"
@@ -106,15 +107,27 @@ export default {
         );
     },
     interactions: function() {
+      let res = [];
       if (
         typeof this.node.type != "undefined" &&
         typeof this.context.interactions[
           this.node.type[this.context.name.get()].get()
         ] != "undefined"
       )
-        return this.context.interactions[
-          this.node.type[this.context.name.get()].get()
-        ]._attribute_names;
+        res = res.concat(
+          this.context.interactions[
+            this.node.type[this.context.name.get()].get()
+          ]._attribute_names
+        );
+      let discoveryArray = [];
+      for (let index = 0; index < res.length; index++) {
+        const element = res[index];
+        let model = this.getModel(element);
+        if (typeof model.properties != "undefined")
+          discoveryArray.push(element + "(D)");
+      }
+      res = res.concat(discoveryArray);
+      return res;
     },
     filteredInteractions: function() {
       let res = [];
@@ -131,6 +144,25 @@ export default {
     }
   },
   methods: {
+    getDbids: async function(node, app) {
+      let res = [];
+      let element = await node.getElement();
+      if (element.constructor.name === "BIMElement") {
+        res = res.concat(element.id.get());
+      } else if (node.hasChildren()) {
+        let childrenNodes = node.getChildrenByApp(app);
+        for (let index = 0; index < childrenNodes.length; index++) {
+          const childNode = childrenNodes[index];
+          res = res.concat(await this.getDbids(childNode, app));
+        }
+      }
+      return res;
+    },
+    isolate: function() {
+      this.getDbids(this.node, this.context).then(dbids => {
+        viewer.isolateById(dbids);
+      });
+    },
     print: function() {
       console.log(this.node);
     },
@@ -146,7 +178,58 @@ export default {
         if (element.type.get() === modelType) return element;
       }
     },
-    onAddNodeElement: function(modelType) {
+
+    promiseGetProperties: function(dbId) {
+      return new Promise(resolve => {
+        viewer.getProperties(dbId, resolve);
+      });
+    },
+    getAlldbIds: function(rootId) {
+      let instanceTree = viewer.model.getData().instanceTree;
+      let alldbId = [];
+      if (!rootId) {
+        return alldbId;
+      }
+      let queue = [];
+      queue.push(rootId);
+      while (queue.length > 0) {
+        let node = queue.shift();
+        alldbId.push(node);
+        instanceTree.enumNodeChildren(node, function(childrenIds) {
+          queue.push(childrenIds);
+        });
+      }
+      return alldbId;
+    },
+    async selectByProperties(modelType) {
+      let model = this.getModel(modelType);
+      console.log(model);
+      // return;
+
+      let selection = [];
+      let instanceTree = viewer.model.getData().instanceTree;
+      let rootId = instanceTree.getRootId();
+      let alldbids = this.getAlldbIds(rootId);
+      for (let index = 0; index < alldbids.length; index++) {
+        const element = alldbids[index];
+        let properties = await this.promiseGetProperties(element);
+        for (let index = 0; index < properties.properties.length; index++) {
+          const prop = properties.properties[index];
+          if (
+            typeof prop.displayName != "undefined" &&
+            typeof prop.displayValue != "undefined" &&
+            (prop.displayName == model.properties[0][0].get() &&
+              prop.displayValue == model.properties[0][1].get())
+            // || (prop.displayName == "Level" && prop.displayValue == "Level 3")
+          )
+            selection.push(element);
+        }
+      }
+      console.log(selection);
+
+      return selection;
+    },
+    async addBySelection(modelType, auto) {
       if (
         typeof this.node.type != "undefined" &&
         typeof this.context.interactions[
@@ -159,8 +242,10 @@ export default {
         let sModel = this.getModel(modelType);
         let modelBase = sModel.base.get();
         let newElement = null;
+        let selected = [];
         if (modelBase === "BIMElement") {
-          let selected = viewer.getSelection();
+          if (auto) selected = await this.selectByProperties(modelType);
+          else selected = viewer.getSelection();
           if (selected.length < 1) alert("Please select an object");
           for (let i = 0; i < selected.length; i++) {
             const itemId = selected[i];
@@ -192,6 +277,13 @@ export default {
           res.node.addType(this.context.name.get(), modelType);
       }
       this.show = true;
+    },
+    onAddNodeElement: function(modelType) {
+      if (modelType.includes("(D)", modelType.length - 3)) {
+        this.addBySelection(modelType.split("(D)")[0], true);
+      } else {
+        this.addBySelection(modelType, false);
+      }
     },
     sendNode: function() {
       EventBus.$emit("nodeContext", this);
@@ -238,14 +330,7 @@ export default {
     //   this.nodeArray = res;
     // }
     updateData: function() {
-      this.nodeArray = [];
-      let relations = this.node.getRelationsByApp(this.context);
-      for (let index = 0; index < relations.length; index++) {
-        const relation = relations[index];
-        this.nodeArray = this.nodeArray.concat(
-          this.node.getChildrenByAppByRelation(this.context, relation)
-        );
-      }
+      this.nodeArray = this.node.getChildrenByApp(this.context);
     }
   },
   mounted() {
