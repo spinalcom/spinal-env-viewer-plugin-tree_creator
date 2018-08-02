@@ -1,6 +1,6 @@
 <script>
 import Vue from "vue";
-import contextStudio from "./contextStudio.vue";
+import contextStudio from "./linker/contextStudio.vue";
 import contextManager from "./manager/contextManager.vue";
 // import appVisualizer from "./apps-visualizer/appVisualizer.vue";
 const ComponentCtor1 = Vue.extend(contextStudio);

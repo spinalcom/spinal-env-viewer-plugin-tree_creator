@@ -54,7 +54,7 @@
 
       </md-list-item>
     </md-list>
-    <md-list v-show="show">
+    <md-list v-if="show">
       <md-list-item class="test3"
                     @click="test"
                     v-for="(node,index) in nodeArray"
@@ -62,7 +62,8 @@
         <spinal-node style=" padding-left: 5px; !important"
                      :node="node"
                      :context="context"
-                     :editMode="editMode"></spinal-node>
+                     :editMode="editMode"
+                     :eventName="eventName"></spinal-node>
       </md-list-item>
     </md-list>
 
@@ -96,7 +97,7 @@ export default {
       return res;
     }
   },
-  props: ["context", "editMode"],
+  props: ["context", "editMode", "eventName"],
   // watch: {
   //   context: function(newContext, oldContext) {
   //     if ((newContext != null, oldContext == null)) {

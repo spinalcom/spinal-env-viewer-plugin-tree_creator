@@ -2,25 +2,6 @@
 <template>
   <div class="sharedToolBarContext">
 
-    <md-list>
-      <md-list-item>
-        <div class="md-list-item-text">
-          <span>{{name}}</span>
-        </div>
-
-        <md-button class="md-icon-button"
-                   @click.stop="onRemove">
-          <md-icon>clear</md-icon>
-        </md-button>
-
-        <md-button class="md-icon-button"
-                   @click.stop="selectLevel3">
-          <md-icon>select_all</md-icon>
-        </md-button>
-
-      </md-list-item>
-    </md-list>
-
   </div>
 
 </template>
@@ -40,10 +21,10 @@ export default {
       preSelected: null,
       disableSelection: false,
       endpointSelector: null,
-      // element: null,
       currentApp: null
     };
   },
+  props: ["eventName"],
   components: {},
   methods: {
     getDbids: async function(node, app) {
@@ -83,34 +64,6 @@ export default {
         viewer.getProperties(dbId, resolve);
       });
     },
-
-    async selectLevel3() {
-      let selection = [];
-      let instanceTree = viewer.model.getData().instanceTree;
-      let rootId = instanceTree.getRootId();
-      let alldbids = this.getAlldbIds(rootId);
-      for (let index = 0; index < alldbids.length; index++) {
-        const element = alldbids[index];
-        let properties = await this.promiseGetProperties(element);
-        for (let index = 0; index < properties.properties.length; index++) {
-          const prop = properties.properties[index];
-          if (
-            (typeof prop.displayName != "undefined" &&
-              typeof prop.displayValue != "undefined" &&
-              (prop.displayName == "Base Constraint" &&
-                prop.displayValue == "Level 3")) ||
-            (prop.displayName == "Level" && prop.displayValue == "Level 3")
-          )
-            selection.push(element);
-        }
-      }
-      var index = selection.indexOf(5539);
-      if (index > -1) {
-        selection.splice(index, 1);
-      }
-      viewer.isolateById(selection);
-      // viewer.select(selection);
-    },
     getEvents: function() {
       EventBus.$on("contextContext", _self => {
         if (_self.context != null) {
@@ -121,7 +74,7 @@ export default {
         }
       });
 
-      EventBus.$on("nodeContext", _self => {
+      EventBus.$on(this.eventName, _self => {
         if (_self.node != null) {
           if (this.preSelected != null) this.preSelected.deselect();
           this.preSelected = _self;
@@ -130,7 +83,23 @@ export default {
           this.name = this.self.name.get();
           this.getDbids(this.self, this.currentApp).then(dbids => {
             viewer.select(dbids);
+            console.log("*************************************************");
 
+            console.log("NODE:", this.self);
+            this.self.getElement().then(el => {
+              console.log("ELEMENT", el);
+
+              if (typeof el.name != "undefined")
+                console.log("NAME:", el.name.get());
+
+              if (typeof el.currentValue != "undefined")
+                console.log("CURRENTVALUE:", el.currentValue.get());
+
+              if (typeof el.unit != "undefined")
+                console.log("unit:", el.unit.get());
+              if (typeof el.path != "undefined")
+                console.log("PATH:", el.path.get());
+            });
             // for (let index = 0; index < dbids.length; index++) {
             //   const element = dbids[index];
             //   viewer.getProperties(element, r => {
@@ -154,25 +123,4 @@ export default {
 </script>
 
 <style scoped>
-.sharedToolBarContext {
-  width: calc(100% - 5px);
-  max-width: 100%;
-  display: inline-block;
-  vertical-align: top;
-  overflow: auto;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-}
-</style>
-
-<style>
-.sharedToolBarContext ul {
-  padding: 0px;
-}
-.sharedToolBarContext > ul > li > div > div {
-  background-color: #2d3d93;
-}
-.sharedToolBarContext > div > ul > li > div > div {
-  padding: 0px;
-  padding-left: 8px;
-}
 </style>

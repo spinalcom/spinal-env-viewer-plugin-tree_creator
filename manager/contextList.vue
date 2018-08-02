@@ -5,7 +5,8 @@
                     v-for="(context,index) in contextArray"
                     :key="context.name.get()+'-'+index">
         <context :context="context"
-                 :editMode="editMode&&context.type.get()==='context'"></context>
+                 :editMode="editMode&&context.type.get()==='context'"
+                 :eventName="eventName"></context>
         <md-divider></md-divider>
       </md-list-item>
     </md-list>
@@ -25,7 +26,7 @@ export default {
       contextArray: []
     };
   },
-  props: ["contextList", "editMode"],
+  props: ["contextList", "editMode", "eventName"],
   components: {
     context
   },

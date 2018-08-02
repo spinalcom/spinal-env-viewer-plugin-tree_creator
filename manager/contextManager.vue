@@ -22,7 +22,8 @@
 
     <shared-tool-bar-context></shared-tool-bar-context>
     <context-list :contextList="contextList"
-                  :editMode="editMode"></context-list>
+                  :editMode="editMode"
+                  :eventName="'nodeContext'"></context-list>
 
   </md-content>
 </template>

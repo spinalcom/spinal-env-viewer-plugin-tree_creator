@@ -54,6 +54,10 @@
               Isolate
             </md-menu-item>
 
+            <md-menu-item @click="openDashboard">
+              Open Dashboard
+            </md-menu-item>
+
           </md-menu-content>
         </md-menu>
 
@@ -68,7 +72,8 @@
         <!-- {{childNode.name.get()}} -->
         <spinal-node :node="childNode"
                      :context="context"
-                     :editMode="editMode"></spinal-node>
+                     :editMode="editMode"
+                     :eventName="eventName"></spinal-node>
       </md-list-item>
     </md-list>
 
@@ -89,7 +94,7 @@ export default {
       nodeArray: []
     };
   },
-  props: ["node", "context", "editMode"],
+  props: ["node", "context", "editMode", "eventName"],
   components: { spinalNode },
   computed: {
     addActive: function() {
@@ -163,7 +168,12 @@ export default {
         viewer.isolateById(dbids);
       });
     },
+    openDashboard: function() {
+      EventBus.$emit("openDashboard", this);
+    },
     print: function() {
+      console.log("*************************************************");
+
       console.log("NODE:", this.node);
       this.node.getElement().then(el => {
         console.log("ELEMENT", el);
@@ -172,6 +182,9 @@ export default {
 
         if (typeof el.currentValue != "undefined")
           console.log("CURRENTVALUE:", el.currentValue.get());
+
+        if (typeof el.unit != "undefined")
+          console.log("unit:", el.currentValue.get());
 
         if (typeof el.path != "undefined") console.log("PATH:", el.path.get());
       });
@@ -213,7 +226,6 @@ export default {
     },
     async selectByProperties(modelType) {
       let model = this.getModel(modelType);
-      console.log(model);
       // return;
 
       let selection = [];
@@ -235,7 +247,6 @@ export default {
             selection.push(element);
         }
       }
-      console.log(selection);
 
       return selection;
     },
@@ -296,7 +307,7 @@ export default {
       }
     },
     sendNode: function() {
-      EventBus.$emit("nodeContext", this);
+      EventBus.$emit(this.eventName, this);
       this.isSelected = true;
     },
     deselect: function() {
