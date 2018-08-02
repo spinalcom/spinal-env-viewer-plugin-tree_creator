@@ -84,7 +84,7 @@ export default {
   name: "spinalNode",
   data() {
     return {
-      show: true,
+      show: false,
       isSelected: false,
       nodeArray: []
     };
@@ -164,7 +164,17 @@ export default {
       });
     },
     print: function() {
-      console.log(this.node);
+      console.log("NODE:", this.node);
+      this.node.getElement().then(el => {
+        console.log("ELEMENT", el);
+
+        if (typeof el.name != "undefined") console.log("NAME:", el.name.get());
+
+        if (typeof el.currentValue != "undefined")
+          console.log("CURRENTVALUE:", el.currentValue.get());
+
+        if (typeof el.path != "undefined") console.log("PATH:", el.path.get());
+      });
     },
     test: function() {},
     incrementNameId(model) {

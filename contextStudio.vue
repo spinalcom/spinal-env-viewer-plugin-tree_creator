@@ -1,9 +1,18 @@
 
 <template>
-  <md-content>
-    <context-list :contextList="contextList"
-                  :editMode="false"></context-list>
-  </md-content>
+  <div class="contextStudio">
+    <!-- <div class="md-layout contextStudioLayout">
+      <div class="md-layout-item">
+        <context-list :contextList="contextList"
+                      :editMode="false"></context-list>
+      </div>
+
+      <div class="md-layout-item">
+        <context-list :contextList="contextList"
+                      :editMode="false"></context-list>
+      </div>
+    </div> -->
+  </div>
 
 </template>
 
@@ -109,5 +118,8 @@ export default {
 }
 .editModeStyle {
   background-color: #356bab;
+}
+.contextStudioLayout {
+  height: 100%;
 }
 </style>
