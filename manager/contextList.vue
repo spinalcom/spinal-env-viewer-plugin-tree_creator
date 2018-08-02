@@ -4,10 +4,11 @@
       <md-list-item @click="test"
                     v-for="(context,index) in contextArray"
                     :key="context.name.get()+'-'+index">
+        <!-- v-show="typeof context.startingNode !='undefined'" -->
         <context :context="context"
                  :editMode="editMode&&context.type.get()==='context'"
                  :eventName="eventName"></context>
-        <md-divider></md-divider>
+        <!-- <md-divider></md-divider> -->
       </md-list-item>
     </md-list>
   </md-content>

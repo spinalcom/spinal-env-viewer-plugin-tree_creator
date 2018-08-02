@@ -9,8 +9,12 @@
           <md-icon v-if="show">unfold_less</md-icon>
           <md-icon v-else>unfold_more</md-icon>
         </md-button>
-        <span style="flex: 1"
-              class="md-title">{{context.name.get()}}</span>
+
+        <div class="md-list-item-text">
+          <span>{{context.name.get()}}</span>
+        </div>
+        <!-- <span style="flex: 1"
+              class="md-title">{{context.name.get()}}</span> -->
 
         <md-menu v-if="editMode"
                  md-direction="bottom-start">

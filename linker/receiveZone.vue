@@ -26,6 +26,7 @@ export default {
         this.node = _self.node;
         this.app = _self.context;
         this.name = this.node.name.get();
+        this.$emit("node", this.node);
       });
     }
   },
@@ -40,7 +41,7 @@ export default {
 <style lang="scss" scoped>
 .receiveZone {
   display: inline-block;
-  background-color: rgba(25, 172, 172, 0.5);
+  // background-color: rgba(25, 172, 172, 0.5);
   padding: 5px;
   margin-top: 20px;
   text-align: center;

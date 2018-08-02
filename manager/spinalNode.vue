@@ -19,7 +19,9 @@
                    class="md-icon-button test">
           <md-icon>stop</md-icon>
         </md-button>
-        <span style="flex: 1">{{node.name.get()}}</span>
+        <div class="md-list-item-text">
+          <span>{{node.name.get()}}</span>
+        </div>
 
         <md-menu v-if="addActive  &&editMode "
                  md-direction="bottom-start">
