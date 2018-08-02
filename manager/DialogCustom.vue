@@ -39,12 +39,13 @@
               </md-field>
             </div>
 
-            <div class="md-layout-item">
-              <md-button @click="test"
-                         class="md-icon-button cool2">
-                <md-icon>add</md-icon>
-              </md-button>
-            </div>
+          </div>
+
+          <div>
+            <md-button @click="test"
+                       class="md-icon-button cool2">
+              <md-icon>add</md-icon>
+            </md-button>
           </div>
 
           <md-table class="md-scrollbar"
@@ -85,10 +86,7 @@
               </md-chip>
             </template>
           </drag>
-          <md-button class="md-icon-button"
-                     @click="addInteraction">
-            <md-icon>add</md-icon>
-          </md-button>
+
           <interaction v-for="(interaction, index) in interactionsArray"
                        :key="index"
                        :modelA="interaction.modelA"
@@ -97,6 +95,12 @@
                        @relationChange="updateRelation(interaction, ...arguments)"
                        :modelB="interaction.modelB"
                        @modelBChange="updateModelB(interaction, ...arguments)"></interaction>
+          <div>
+            <md-button class="md-icon-button cool3"
+                       @click="addInteraction">
+              <md-icon>add</md-icon>
+            </md-button>
+          </div>
         </md-step>
 
         <!-- <md-step id="third"
@@ -271,7 +275,11 @@ export default {
 }
 .cool2 {
   top: 70%;
-  left: 40%;
+  // left: 40%;
+}
+.cool3 {
+  // top: 70%;
+  left: calc(50% - 40px);
 }
 </style>
 
