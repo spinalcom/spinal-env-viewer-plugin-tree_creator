@@ -33,7 +33,7 @@
           <md-menu-content class="small-menu">
             <md-menu-item v-for="(modelType,index) in interactions"
                           :key="modelType+'-'+index"
-                          @click.stop="onAddNodeElement(modelType)">
+                          @click.native="onAddNodeElement(modelType)">
               {{modelType}}
             </md-menu-item>
 
