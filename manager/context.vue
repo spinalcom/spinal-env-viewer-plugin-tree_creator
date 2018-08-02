@@ -33,7 +33,7 @@
           </md-menu-content>
         </md-menu>
 
-        <md-menu v-else
+        <!-- <md-menu v-else
                  md-direction="bottom-start">
           <md-button class="md-icon-button"
                      md-menu-trigger>
@@ -54,11 +54,11 @@
             </md-menu-item>
 
           </md-menu-content>
-        </md-menu>
+        </md-menu> -->
 
       </md-list-item>
     </md-list>
-    <md-list v-if="show">
+    <md-list v-show="show">
       <md-list-item class="test3"
                     @click="test"
                     v-for="(node,index) in nodeArray"

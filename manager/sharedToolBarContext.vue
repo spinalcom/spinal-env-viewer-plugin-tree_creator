@@ -8,6 +8,16 @@
           <span>{{name}}</span>
         </div>
 
+        <md-button v-if="self!=null &&self.constructor.name==='SpinalNode'"
+                   class="md-icon-button"
+                   @click.stop="editName=true">
+          <md-icon>edit</md-icon>
+        </md-button>
+        <dialog-prompt :active="editName"
+                       :oldJson="name"
+                       @promptValue="handlePrompt"
+                       @disablePrompt="editName=false"></dialog-prompt>
+
         <md-button class="md-icon-button"
                    @click.stop="onRemove">
           <md-icon>clear</md-icon>
@@ -30,6 +40,7 @@ var globalType;
 var spinalSystem;
 var EventBus;
 var viewer;
+import dialogPrompt from "./dialogPrompt.vue";
 
 export default {
   name: "sharedToolBarContext",
@@ -41,11 +52,22 @@ export default {
       disableSelection: false,
       endpointSelector: null,
       // element: null,
-      currentApp: null
+      currentApp: null,
+      editName: false
+      // editedName: ""
     };
   },
-  components: {},
+  components: { dialogPrompt },
   methods: {
+    handlePrompt: function(value) {
+      // this.editedName = value;
+      this.editName = false;
+      this.self.name.set(value);
+      this.name = value;
+      this.self.getElement().then(ele => {
+        ele.name.set(value);
+      });
+    },
     getDbids: async function(node, app) {
       let res = [];
       let element = await node.getElement();

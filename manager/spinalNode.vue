@@ -48,16 +48,17 @@
           </md-button>
 
           <md-menu-content class="small-menu">
-            <md-menu-item @click="print">
-              print
+
+            <md-menu-item @click="openDashboard">
+              Open Dashboard
             </md-menu-item>
 
             <md-menu-item @click="isolate">
               Isolate
             </md-menu-item>
 
-            <md-menu-item @click="openDashboard">
-              Open Dashboard
+            <md-menu-item @click="print">
+              print
             </md-menu-item>
 
           </md-menu-content>
