@@ -1,6 +1,6 @@
 {
   "name": "spinal-env-viewer-plugin-context_studio",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "index.vue",
   "scripts": {
@@ -54,7 +54,8 @@
   "dependencies": {
     "d3": "^5.5.0",
     "spinal-models-context_studio": "git+https://github.com/spinalcom/spinal-models-context_studio.git",
-    "vue-drag-drop": "^1.1.4"
+    "vue-drag-drop": "^1.1.4",
+    "imgurify": "^2.0.1"
   },
   "homepage": "https://github.com/spinalcom/spinal-env-viewer-plugin-context_studio#readme"
 }
