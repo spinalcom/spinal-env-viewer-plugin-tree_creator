@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "d3": "^5.5.0",
+    "imgurify": "^2.0.1",
     "spinal-models-context_studio": "git+https://github.com/spinalcom/spinal-models-context_studio.git",
     "vue-drag-drop": "^1.1.4"
   },
