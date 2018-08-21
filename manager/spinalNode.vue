@@ -24,11 +24,9 @@
         </div>
 
         <md-menu v-if="addActive  &&editMode "
-                 md-direction="bottom-start"
-                 md-active.sync="menuOpened">
+                 md-direction="bottom-start">
           <md-button class="md-icon-button"
-                     @click.stop="openMenu">
-            <!-- md-menu-trigger -->
+                     md-menu-trigger>
             <md-icon>add</md-icon>
           </md-button>
 
@@ -50,16 +48,17 @@
           </md-button>
 
           <md-menu-content class="small-menu">
-            <md-menu-item @click="print">
-              print
+
+            <md-menu-item @click="openDashboard">
+              Open Dashboard
             </md-menu-item>
 
             <md-menu-item @click="isolate">
               Isolate
             </md-menu-item>
 
-            <md-menu-item @click="openDashboard">
-              Open Dashboard
+            <md-menu-item @click="print">
+              print
             </md-menu-item>
 
           </md-menu-content>
@@ -95,8 +94,7 @@ export default {
     return {
       show: false,
       isSelected: false,
-      nodeArray: [],
-      menuOpened: false
+      nodeArray: []
     };
   },
   props: ["node", "context", "editMode", "eventName"],
@@ -154,11 +152,6 @@ export default {
     }
   },
   methods: {
-    openMenu() {
-      console.log("open menu");
-      console.log(this.menuOpened);
-      this.menuOpened = !this.menuOpened;
-    },
     getDbids: async function(node, app) {
       let res = [];
       let element = await node.getElement();
