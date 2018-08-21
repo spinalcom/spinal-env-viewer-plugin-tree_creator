@@ -1,8 +1,7 @@
 <template>
   <md-content class='contextList md-scrollbar'>
     <md-list>
-      <md-list-item @click="test"
-                    v-for="(context,index) in contextArray"
+      <md-list-item v-for="(context,index) in contextArray"
                     :key="context.name.get()+'-'+index">
         <!-- v-show="typeof context.startingNode !='undefined'" -->
         <context :context="context"
@@ -39,7 +38,9 @@ export default {
     }
   },
   methods: {
-    test: function() {},
+    test: function() {
+      console.log("BAKA IS TESTING ALL FUNCTION");
+    },
     updateArray: function() {
       this.contextArray = [];
       for (

@@ -2,8 +2,8 @@
 <template>
   <md-content class="context"
               v-bind:class="{contextSelect : isSelected}">
-    <md-list @click="sendContext">
-      <md-list-item>
+    <md-list>
+      <md-list-item @click="sendContext">
         <md-button class="md-icon-button"
                    @click.stop="show = !show">
           <md-icon v-if="show">unfold_less</md-icon>
@@ -16,10 +16,11 @@
         <!-- <span style="flex: 1"
               class="md-title">{{context.name.get()}}</span> -->
 
-        <md-menu v-if="editMode"
+        <md-menu :md-active="activeMenu"
+                 v-if="editMode"
                  md-direction="bottom-start">
           <md-button class="md-icon-button"
-                     md-menu-trigger>
+                     @click.stop.prevent="activeMenu=true">
             <md-icon>add</md-icon>
           </md-button>
 
@@ -33,7 +34,7 @@
           </md-menu-content>
         </md-menu>
 
-        <!-- <md-menu v-else
+        <md-menu v-else
                  md-direction="bottom-start">
           <md-button class="md-icon-button"
                      md-menu-trigger>
@@ -54,11 +55,11 @@
             </md-menu-item>
 
           </md-menu-content>
-        </md-menu> -->
+        </md-menu>
 
       </md-list-item>
     </md-list>
-    <md-list v-show="show">
+    <md-list v-if="show">
       <md-list-item class="test3"
                     @click="test"
                     v-for="(node,index) in nodeArray"
@@ -86,7 +87,8 @@ export default {
       nodeArray: [],
       show: false,
       isSelected: false,
-      t1: true
+      t1: true,
+      activeMenu: false
     };
   },
   computed: {
@@ -117,10 +119,12 @@ export default {
     },
     test: function() {},
     sendContext: function() {
+      console.log("BAKA IS TESTING ALL FUNCTION");
       EventBus.$emit("contextContext", this);
       this.isSelected = true;
     },
     deselect: function() {
+      console.log("BAKA IS TESTING ALL FUNCTION");
       this.isSelected = false;
     },
     getModel: function(modelType) {

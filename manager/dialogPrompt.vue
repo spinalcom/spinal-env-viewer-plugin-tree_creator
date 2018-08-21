@@ -1,8 +1,8 @@
 <template>
   <div>
-    <md-dialog-prompt :md-active="active"
+    <md-dialog-prompt :md-active.sync="active"
                       v-model="value"
-                      :md-title="oldJson"
+                      :md-title="oldTitle"
                       md-input-maxlength="30"
                       md-confirm-text="Change"
                       @md-confirm="sendEvent"
@@ -11,7 +11,7 @@
 </template>
 
 <script>
-// import EventsBus from "./EventBus.vue";
+import EventBus from "./EventBus.vue";
 export default {
   name: "DialogPrompt",
   data() {
@@ -19,16 +19,16 @@ export default {
       value: ""
     };
   },
-  props: ["active", "oldJson"],
+  props: ["active","oldJson"],
   methods: {
     sendEvent: function() {
       var toSend = this.value;
       this.value = "";
-      this.$emit("promptValue", toSend);
+      EventBus.$emit("promptValue", toSend);
     },
     cancelEvent: function() {
       this.value = "";
-      this.$emit("disablePrompt");
+      EventBus.$emit("disablePrompt");
     }
   }
 };
