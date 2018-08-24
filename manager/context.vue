@@ -14,10 +14,8 @@
         <div class="md-list-item-text">
           <span>{{context.name.get()}}</span>
         </div>
-        <!-- <span style="flex: 1"
-              class="md-title">{{context.name.get()}}</span> -->
 
-        <md-menu v-if="editMode"
+        <!-- <md-menu v-if="editMode"
                  md-direction="bottom-start">
           <md-button class="md-icon-button"
                      md-menu-trigger>
@@ -29,29 +27,6 @@
                           :key="model.type+'-'+index"
                           @click.stop="onAddContextElement(model)">
               {{model.type}}
-            </md-menu-item>
-
-          </md-menu-content>
-        </md-menu>
-
-        <!-- <md-menu v-else
-                 md-direction="bottom-start">
-          <md-button class="md-icon-button"
-                     md-menu-trigger>
-            <md-icon>more_horiz</md-icon>
-          </md-button>
-
-          <md-menu-content class="small-menu">
-            <md-menu-item>
-              <md-button @click='print'
-                         class="md-icon-button">
-                <md-icon>print</md-icon>
-              </md-button>
-            </md-menu-item>
-
-            <md-menu-item>
-              <md-checkbox v-model="t1"
-                           class="md-primary">relation</md-checkbox>
             </md-menu-item>
 
           </md-menu-content>
