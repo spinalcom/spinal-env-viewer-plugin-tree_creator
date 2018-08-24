@@ -3,6 +3,7 @@
   <md-content class="context"
               v-bind:class="{contextSelect : isSelected}">
     <md-list @click="sendContext">
+
       <md-list-item>
         <md-button class="md-icon-button"
                    @click.stop="show = !show">
@@ -79,6 +80,7 @@ const globalType = typeof window === "undefined" ? global : window;
 
 var EventBus;
 import spinalNode from "./spinalNode.vue";
+
 export default {
   name: "context",
   data() {
@@ -129,7 +131,14 @@ export default {
         if (element.type.get() === modelType) return element;
       }
     },
-    getEvents: function() {},
+    getEvents: function() {
+      globalType.spinal.eventBus.$on("create_context", el => {
+        if (el.context._server_id == this.context._server_id) {
+          // this.onAddContextElement(el.icon_action.model);
+          console.log("create_context", el);
+        }
+      });
+    },
     promiseLoad(_ptr) {
       return new Promise(resolve => {
         _ptr.load(resolve);
@@ -190,12 +199,23 @@ export default {
       //   this.context.name.get(),
       //   "has"
       // );
+    },
+    sidebarElementClick: function(icon) {
+      console.log("icon clicked", icon);
+      if (icon.icon == "add") {
+        console.log("add", icon.model);
+      }
     }
   },
   mounted() {
+    console.log("mounted");
     EventBus = globalType.spinal.eventBus;
     this.getEvents();
     this.linkToDB();
+  },
+  beforeUpdated() {
+    console.log("destroy");
+    globalType.spinal.eventBus.$off("create_context");
   }
 };
 </script>
@@ -211,6 +231,7 @@ export default {
 .contextSelect > ul:first-child {
   background-color: #2d3d93;
 }
+
 .test3 {
   border-right: 2px solid black !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;

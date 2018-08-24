@@ -5,7 +5,8 @@
                     v-for="(context,index) in contextArray"
                     :key="context.name.get()+'-'+index">
         <!-- v-show="typeof context.startingNode !='undefined'" -->
-        <context :context="context"
+        <context ref="ref_context"
+                 :context="context"
                  :editMode="editMode&&context.type.get()==='context'"
                  :eventName="eventName"></context>
         <!-- <md-divider></md-divider> -->
@@ -61,6 +62,30 @@ export default {
     getEvents: function() {},
     linkToDB: function() {
       this.contextList.bind(this.updateArray);
+    },
+    sidebarElementClick: function(icon) {
+      // for (var i = 0; i < this.$refs.ref_context.length; i++) {
+      //   // if (this.$refs.ref_context[i].models) {
+      //   //   // for (var j = 0; j < this.$refs.ref_context[i].models.length; j++) {
+      //   //   //   if (
+      //   //   //     this.$refs.ref_context[i].models[j].type.get() == icon.model.type
+      //   //   //   ) {
+      //   //   //     console.log("if exact", this.$refs.ref_context);
+      //   //   //     this.$refs.ref_context[i].sidebarElementClick(icon);
+      //   //   //   }
+      //   //   // }
+      //   //   // console.log("if exact", this.$refs.ref_context);
+      //   //   // this.$refs.ref_context[i].sidebarElementClick(icon);
+      //   //   // break;
+      //   //   console.log("condition if executée");
+      //   // }
+      //   console.log(
+      //     i,
+      //     this.$refs.ref_context[i].models
+      //       ? this.$refs.ref_context[i]
+      //       : "undefined"
+      //   );
+      // }
     }
   },
 
@@ -77,7 +102,8 @@ export default {
 <style scoped>
 .contextList {
   overflow-y: auto;
-  height: calc(100% - 40px);
-  width: calc(100% - 10px);
+  height: calc(95% - 40px);
+  width: calc(90% - 5px);
+  float: right;
 }
 </style>

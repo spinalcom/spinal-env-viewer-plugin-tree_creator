@@ -7,6 +7,7 @@
       <dialog-custom :graph="graph"
                      :showDialog="showDialog"
                      @change="showDialog = $event"></dialog-custom>
+
       <md-button @click="showDialog = true"
                  class="md-icon-button">
         <md-icon>add</md-icon>
@@ -21,7 +22,12 @@
     </md-content>
 
     <shared-tool-bar-context></shared-tool-bar-context>
-    <context-list :contextList="contextList"
+
+    <sidebar-menu :editMode="editMode"
+                  @icon_click="sidebarElementClick"></sidebar-menu>
+
+    <context-list ref="contextList"
+                  :contextList="contextList"
                   :editMode="editMode"
                   :eventName="'nodeContext'"></context-list>
 
@@ -36,6 +42,8 @@ var EventBus;
 import contextList from "./contextList.vue";
 import DialogCustom from "./DialogCustom.vue";
 import sharedToolBarContext from "./sharedToolBarContext.vue";
+import sidebarMenu from "./sidebar.vue";
+
 export default {
   name: "contextManager",
   data() {
@@ -47,7 +55,7 @@ export default {
       editMode: false
     };
   },
-  components: { contextList, sharedToolBarContext, DialogCustom },
+  components: { contextList, sharedToolBarContext, DialogCustom, sidebarMenu },
   methods: {
     getEvents: function() {},
     linkToDB: function() {
@@ -64,6 +72,9 @@ export default {
           clearInterval(interval);
         }
       }, 500);
+    },
+    sidebarElementClick: function(icon) {
+      this.$refs.contextList.sidebarElementClick(icon);
     }
   },
   mounted() {

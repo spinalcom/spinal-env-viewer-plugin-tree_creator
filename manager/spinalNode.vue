@@ -23,7 +23,7 @@
           <span>{{node.name.get()}}</span>
         </div>
 
-        <md-menu v-if="addActive  &&editMode "
+        <!-- <md-menu v-if="addActive  &&editMode "
                  md-direction="bottom-start">
           <md-button class="md-icon-button"
                      md-menu-trigger>
@@ -38,9 +38,9 @@
             </md-menu-item>
 
           </md-menu-content>
-        </md-menu>
+        </md-menu> -->
 
-        <md-menu v-else-if="!editMode"
+        <!-- <md-menu v-else-if="!editMode"
                  md-direction="bottom-start">
           <md-button class="md-icon-button"
                      md-menu-trigger>
@@ -62,7 +62,7 @@
             </md-menu-item>
 
           </md-menu-content>
-        </md-menu>
+        </md-menu> -->
 
       </md-list-item>
     </md-list>
@@ -116,6 +116,7 @@ export default {
     },
     interactions: function() {
       let res = [];
+
       if (
         typeof this.node.type != "undefined" &&
         typeof this.context.interactions[
@@ -197,7 +198,15 @@ export default {
       model.nameCount.set(model.nameCount.get() + 1);
       return model.nameCount.get();
     },
-    getEvents: function() {},
+    getEvents: function() {
+      globalType.spinal.eventBus.$on("create_node", el => {
+        if (el.context._server_id == this.context._server_id) {
+          console.log(this.context.name.get());
+          // this.onAddContextElement(el.icon_action.model);
+          console.log("create_context", el);
+        }
+      });
+    },
     getModel: function(modelType) {
       for (let index = 0; index < this.context.models.length; index++) {
         const element = this.context.models[index];

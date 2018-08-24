@@ -11,8 +11,8 @@ const ClassName = "contextStudio";
 const globalType = typeof window === "undefined" ? global : window;
 const spinalSystem = globalType.spinal.spinalSystem;
 
-const PanelTitle1 = "Context Studio";
-const ButtonLabel1 = "Context Studio";
+const PanelTitle1 = "Context Linker";
+const ButtonLabel1 = "Context Linker";
 const ButtonIcon1 = "description";
 
 const PanelTitle2 = "Context Manager";
