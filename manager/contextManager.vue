@@ -2,6 +2,13 @@
 <template>
   <md-content class="contextManager">
 
+    <md-button class="md-fab md-mini md-fab-bottom-right"
+               @click="editMode = !editMode"
+               v-bind:class="{ editModeStyle: editMode }"
+               :title="getFabTitle()">
+      <md-icon>border_color</md-icon>
+    </md-button>
+
     <md-content class='mainButtons'>
 
       <dialog-custom :graph="graph"
@@ -13,17 +20,18 @@
         <md-icon>add</md-icon>
       </md-button>
 
-      <md-button @click="editMode = !editMode"
+      <!-- <md-button @click="editMode = !editMode"
                  class="md-icon-button"
                  v-bind:class="{ editModeStyle: editMode }">
         <md-icon>edit</md-icon>
-      </md-button>
+      </md-button> -->
 
     </md-content>
 
     <shared-tool-bar-context></shared-tool-bar-context>
 
     <sidebar-menu :editMode="editMode"
+                  :graph="graph"
                   @icon_click="sidebarElementClick"></sidebar-menu>
 
     <context-list ref="contextList"
@@ -57,6 +65,9 @@ export default {
   },
   components: { contextList, sharedToolBarContext, DialogCustom, sidebarMenu },
   methods: {
+    getFabTitle: function() {
+      return this.editMode ? "Disable edit Mode" : "Enable edit Mode";
+    },
     getEvents: function() {},
     linkToDB: function() {
       let interval = setInterval(() => {
@@ -90,6 +101,11 @@ export default {
 <style scoped>
 .contextManager {
   height: calc(100% - 35px);
+}
+
+.contextManager .editModeStyle {
+  /* background-color: #356bab; */
+  background-color: #31c64b !important;
 }
 </style>
 
@@ -139,8 +155,5 @@ export default {
   min-height: 0px;
   font-size: 14px;
   box-sizing: border-box;
-}
-.editModeStyle {
-  background-color: #356bab;
 }
 </style>

@@ -8,7 +8,7 @@
           <span>{{name}}</span>
         </div>
 
-        <md-button v-if="self!=null &&self.constructor.name==='SpinalNode'"
+        <!-- <md-button v-if="self!=null &&self.constructor.name==='SpinalNode'"
                    class="md-icon-button"
                    @click.stop="editName=true">
           <md-icon>edit</md-icon>
@@ -16,7 +16,7 @@
         <dialog-prompt :active="editName"
                        :oldJson="name"
                        @promptValue="handlePrompt"
-                       @disablePrompt="editName=false"></dialog-prompt>
+                       @disablePrompt="editName=false"></dialog-prompt> -->
 
         <md-button class="md-icon-button"
                    @click.stop="onRemove">

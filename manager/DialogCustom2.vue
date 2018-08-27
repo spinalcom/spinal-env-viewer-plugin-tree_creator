@@ -1,7 +1,6 @@
 <template>
   <div>
-    <md-dialog :md-active="showDialog"
-               @md-opened="modifyOrCreate">
+    <md-dialog :md-active="showDialog">
       <md-dialog-title>Context Creator</md-dialog-title>
 
       <md-steppers>
@@ -158,22 +157,12 @@ export default {
     properties: ""
   }),
   components: { interaction },
-  props: ["showDialog", "graph", "contextToEdit"],
+  props: ["showDialog", "graph"],
   // model: {
   //   prop: "showDialog",
   //   event: "change"
   // },
-  // mounted() {
-  //   console.log("mounted dialogCustom");
-  //   this.modifyOrCreate();
-  // },
   methods: {
-    modifyOrCreate: function() {
-      console.log("md-dialog opened !");
-      if (this.contextToEdit) {
-        this.contextName = this.contextToEdit.name.get();
-      }
-    },
     updateModelA: function(interaction, modelA) {
       interaction.modelA = modelA;
     },

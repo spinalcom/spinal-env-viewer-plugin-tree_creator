@@ -1,23 +1,41 @@
 <template>
   <md-content class="_sidebar">
+
     <div class="sidebar_button"
          v-for="_btn in allIcons"
-         :key="_btn.title">
-      <md-button class="md-icon-button"
-                 @click="clickEvent(_btn)"
-                 :title="_btn.title">
-        <md-icon>{{_btn.icon}}</md-icon>
-      </md-button>
+         :key="_btn.title"
+         @click="clickEvent(_btn)"
+         :title="_btn.title">
+      <!-- <div @click="clickEvent(_btn)"
+           :title="_btn.title"> -->
+      <!-- class="md-icon-button" -->
+      <md-icon>{{_btn.icon}}</md-icon>
+      <div class="text">{{_btn.name}}</div>
+      <!-- </div> -->
     </div>
+
+    <dialog-prompt v-if="nodeSelected"
+                   :active="editName"
+                   :oldJson="nodeSelected.name.get()"
+                   @promptValue="handlePrompt"
+                   @disablePrompt="editName=false"></dialog-prompt>
+
+    <dialog-custom :graph="graph"
+                   :showDialog="showDialog"
+                   :contextToEdit="contextSelected"
+                   @change="showDialog = $event"></dialog-custom>
 
   </md-content>
 </template>
 
 <script>
+import dialogPrompt from "./dialogPrompt.vue";
+import DialogCustom from "./DialogCustom.vue";
 const globalType = typeof window === "undefined" ? global : window;
 
 export default {
   name: "sidebarMenu",
+  components: { dialogPrompt, DialogCustom },
   data() {
     return {
       type: null,
@@ -25,18 +43,23 @@ export default {
       vueComponentSelected: null,
       contextSelected: null,
       nodeSelected: null,
+      editName: false,
+      showDialog: false,
       buttonList: {
         edit: {
+          name: "Edit",
           title: "Edit",
           icon: "edit",
-          disabled: false
+          action: "edit"
         },
         dashboard: {
+          name: "Open dashBoard",
           title: "Open dashBoard",
           icon: "show_chart",
           action: "dashboard"
         },
         isolate: {
+          name: "Isolate",
           title: "Isolate",
           icon: "all_out",
           action: "isolate"
@@ -56,6 +79,7 @@ export default {
       if (el.context.type.get() == "context") {
         _self.type = "Globalcontext";
         _self.contextSelected = el.context;
+        _self.nodeSelected = null;
       } else {
         _self.type = "smartConnector";
       }
@@ -75,6 +99,14 @@ export default {
     });
   },
   methods: {
+    handlePrompt: function(value) {
+      // this.editedName = value;
+      this.editName = false;
+      this.nodeSelected.name.set(value);
+      this.nodeSelected.getElement().then(ele => {
+        ele.name.set(value);
+      });
+    },
     editModeIconsContext: function() {
       for (var i = 0; i < this.contextSelected.models.length; i++) {
         const element = this.contextSelected.models[i];
@@ -143,7 +175,6 @@ export default {
       }
     },
     clickEvent: function(btn) {
-      console.log(btn);
       // globalType.spinal.eventBus.$emit(btn.action, btn);
       if (btn.action == "create_context") {
         this.vueComponentSelected.onAddContextElement(btn.model);
@@ -156,10 +187,15 @@ export default {
           "openDashboard",
           this.vueComponentSelected
         );
+      } else if (btn.action == "edit" && this.nodeSelected) {
+        this.editName = true;
+      } else if (btn.action == "edit" && this.nodeSelected == null) {
+        console.log("contextSelected", this.contextSelected);
+        this.showDialog = true;
       }
     }
   },
-  props: ["editMode"],
+  props: ["editMode", "graph"],
   watch: {
     editMode: function() {
       this.getAllIconsByTypes();
@@ -182,5 +218,20 @@ export default {
   height: 40px;
   padding-top: 10px;
   text-align: center;
+  margin-bottom: 10px;
+}
+
+._sidebar .sidebar_button:hover {
+  cursor: pointer;
+}
+
+._sidebar .sidebar_button .md-icon {
+  height: 50%;
+}
+
+._sidebar .sidebar_button .text {
+  height: 50%;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 </style>
