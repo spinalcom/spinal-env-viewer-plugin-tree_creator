@@ -25,6 +25,14 @@
                    :contextToEdit="contextSelected"
                    @change="showDialog = $event"></dialog-custom>
 
+    <md-dialog-confirm :md-active="activeRemove"
+                       md-title="Remove"
+                       md-content="Do you want to remove it ?"
+                       md-confirm-text="Yes"
+                       md-cancel-text="No"
+                       @md-cancel="activeRemove = false"
+                       @md-confirm="onConfirm" />
+
   </md-content>
 </template>
 
@@ -45,6 +53,8 @@ export default {
       nodeSelected: null,
       editName: false,
       showDialog: false,
+      activeRemove: false,
+      btnClicked: null,
       buttonList: {
         edit: {
           name: "Edit",
@@ -56,13 +66,20 @@ export default {
           name: "Open dashBoard",
           title: "Open dashBoard",
           icon: "show_chart",
-          action: "dashboard"
+          action: "dashboard",
+          bimObj: false
         },
         isolate: {
           name: "Isolate",
           title: "Isolate",
           icon: "all_out",
           action: "isolate"
+        },
+        remove: {
+          name: "remove",
+          title: "remove",
+          icon: "delete",
+          action: "remove"
         }
         // add: {
         //   title: "add",
@@ -99,6 +116,33 @@ export default {
     });
   },
   methods: {
+    onConfirm: function() {
+      if (this.btnClicked.action == "remove" && this.nodeSelected) {
+        this.removeNodeContext();
+      } else if (
+        this.btnClicked.action == "remove" &&
+        this.nodeSelected == null
+      ) {
+        this.removeContext();
+      }
+      this.activeRemove = false;
+    },
+    removeContext: function() {
+      this.graph.appsList.rem_attr(this.contextSelected.name.get());
+      this.graph.appsListByType.context.rem_attr(
+        this.contextSelected.name.get()
+      );
+    },
+    removeNodeContext: function() {
+      var relations = this.nodeSelected.getRelationsByAppName(
+        this.contextSelected.name.get()
+      );
+
+      for (var i = 0; i < relations.length; i++) {
+        let relation = relations[i];
+        relation.removeFromNodeList2(this.nodeSelected);
+      }
+    },
     handlePrompt: function(value) {
       // this.editedName = value;
       this.editName = false;
@@ -157,6 +201,8 @@ export default {
             // this.allIcons.push(this.buttonList.add);
             this.editModeIconsContext();
           }
+
+          this.allIcons.push(this.buttonList.remove);
           break;
         case "nodeContext":
           this.allIcons.push(this.buttonList.edit);
@@ -166,11 +212,25 @@ export default {
             // this.allIcons.push(this.buttonList.add);
             this.editModeIconsNode();
           }
+
+          var relations = this.nodeSelected.getRelationsByAppNameByType(
+            "linker",
+            "link"
+          );
+
+          if (relations.length > 0) {
+            this.buttonList.dashboard.bimObj = true;
+            this.allIcons.push(this.buttonList.dashboard);
+          }
+
+          this.allIcons.push(this.buttonList.remove);
           break;
         case "spinalNode":
           this.allIcons.push(this.buttonList.edit);
           this.allIcons.push(this.buttonList.isolate);
+          this.buttonList.dashboard.bimObj = false;
           this.allIcons.push(this.buttonList.dashboard);
+          // this.allIcons.push(this.buttonList.remove);
           break;
       }
     },
@@ -182,16 +242,23 @@ export default {
         this.vueComponentSelected.addBySelection(btn.name, false);
       } else if (btn.action == "isolate") {
         this.vueComponentSelected.isolate();
-      } else if (btn.action == "dashboard") {
+      } else if (btn.action == "dashboard" && !btn.bimObj) {
         globalType.spinal.eventBus.$emit(
           "openDashboard",
           this.vueComponentSelected
         );
+      } else if (btn.action == "dashboard" && btn.bimObj) {
+        globalType.spinal.eventBus.$emit(
+          "dashBoardBimObject",
+          this.nodeSelected
+        );
       } else if (btn.action == "edit" && this.nodeSelected) {
         this.editName = true;
       } else if (btn.action == "edit" && this.nodeSelected == null) {
-        console.log("contextSelected", this.contextSelected);
         this.showDialog = true;
+      } else if (btn.action == "remove") {
+        this.btnClicked = btn;
+        this.activeRemove = true;
       }
     }
   },

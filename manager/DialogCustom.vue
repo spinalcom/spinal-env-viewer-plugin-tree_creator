@@ -112,7 +112,7 @@
 
       <md-dialog-actions>
         <md-button class="md-primary"
-                   @click="update(false)">Close</md-button>
+                   @click="cancel">Close</md-button>
         <md-button class="md-primary"
                    @click="handleSave">Save</md-button>
       </md-dialog-actions>
@@ -168,10 +168,34 @@ export default {
   //   this.modifyOrCreate();
   // },
   methods: {
+    getInteractionsArray: function() {
+      this.interactionsArray = [];
+      var contextInteractions = this.contextToEdit.interactions;
+
+      for (var i = 0; i < contextInteractions._attribute_names.length; i++) {
+        var el = contextInteractions._attribute_names[i];
+
+        var interactions = { modelA: el };
+
+        for (
+          let j = 0;
+          j < contextInteractions[el]._attribute_names.length;
+          j++
+        ) {
+          const el2 = contextInteractions[el]._attribute_names[j];
+          interactions["modelB"] = el2;
+          interactions["relation"] = contextInteractions[el][el2];
+
+          this.interactionsArray.push(interactions);
+        }
+      }
+    },
     modifyOrCreate: function() {
       console.log("md-dialog opened !");
       if (this.contextToEdit) {
         this.contextName = this.contextToEdit.name.get();
+        this.models = this.contextToEdit.models.get();
+        this.getInteractionsArray();
       }
     },
     updateModelA: function(interaction, modelA) {
@@ -239,19 +263,13 @@ export default {
       this.update(false);
       let newInteractionsObj = this.interactionsObj();
       let newRelations = this.relations();
-      console.log(this.models);
 
-      this.graph.getContext(
-        this.contextName,
-        newRelations,
-        this.models,
-        newInteractionsObj
-      );
-      this.models = [];
-      this.interactionsArray = [
-        { modelA: "modelA", relation: "relation", modelB: "modelB" }
-      ];
-      this.contextName = "";
+      if (!this.contextToEdit) {
+        this.createContext(newInteractionsObj, newRelations);
+      } else {
+        console.log("modify a context");
+        this.modifyContext(newInteractionsObj, newRelations);
+      }
     },
     parseProperties: function() {
       // this.propertiesArray[this.type] = {};
@@ -265,6 +283,43 @@ export default {
       }
 
       // console.log(this.propertiesArray);
+    },
+    cancel: function() {
+      if (!this.contextToEdit) {
+        this.contextName = "";
+        this.type = "";
+        this.base = "";
+        this.models = [];
+        this.interactionsArray = [
+          { modelA: "modelA", relation: "relation", modelB: "modelB" }
+        ];
+        this.propertiesArray = [];
+        this.properties = "";
+      }
+
+      this.update(false);
+    },
+    createContext(newInteractionsObj, newRelations) {
+      this.graph.getContext(
+        this.contextName,
+        newRelations,
+        this.models,
+        newInteractionsObj
+      );
+      this.models = [];
+      this.interactionsArray = [
+        { modelA: "modelA", relation: "relation", modelB: "modelB" }
+      ];
+      this.contextName = "";
+    },
+    modifyContext(newInteractionsObj, newRelations) {
+      console.log("newInteractionsObj", newInteractionsObj);
+      console.log("newRelations", newRelations);
+      console.log("models", this.models);
+
+      this.contextToEdit.relationsTypesLst.set(newRelations);
+      this.contextToEdit.models.set(this.models);
+      this.contextToEdit.interactions.set(newInteractionsObj);
     }
   },
   computed: {
