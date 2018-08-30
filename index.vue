@@ -2,6 +2,9 @@
 import Vue from "vue";
 import contextStudio from "./linker/contextStudio.vue";
 import contextManager from "./manager/contextManager.vue";
+
+require("spinal-env-viewer-plugin-apps");
+
 // import appVisualizer from "./apps-visualizer/appVisualizer.vue";
 const ComponentCtor1 = Vue.extend(contextStudio);
 const ComponentCtor2 = Vue.extend(contextManager);

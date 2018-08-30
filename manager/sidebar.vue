@@ -80,6 +80,18 @@ export default {
           title: "remove",
           icon: "delete",
           action: "remove"
+        },
+        documents: {
+          name: "collaborator",
+          title: "collaborator",
+          icon: "folder",
+          action: "collaborator"
+        },
+        notes: {
+          name: "comments",
+          title: "comments",
+          icon: "border_color",
+          action: "comments"
         }
         // add: {
         //   title: "add",
@@ -111,6 +123,7 @@ export default {
         _self.nodeSelected = el.node;
       } else {
         _self.type = "spinalNode";
+        _self.nodeSelected = el.node;
       }
       _self.getAllIconsByTypes();
     });
@@ -223,6 +236,8 @@ export default {
             this.allIcons.push(this.buttonList.dashboard);
           }
 
+          this.allIcons.push(this.buttonList.documents);
+          this.allIcons.push(this.buttonList.notes);
           this.allIcons.push(this.buttonList.remove);
           break;
         case "spinalNode":
@@ -230,6 +245,8 @@ export default {
           this.allIcons.push(this.buttonList.isolate);
           this.buttonList.dashboard.bimObj = false;
           this.allIcons.push(this.buttonList.dashboard);
+          this.allIcons.push(this.buttonList.documents);
+          this.allIcons.push(this.buttonList.notes);
           // this.allIcons.push(this.buttonList.remove);
           break;
       }
@@ -259,6 +276,18 @@ export default {
       } else if (btn.action == "remove") {
         this.btnClicked = btn;
         this.activeRemove = true;
+      } else if (btn.action == "collaborator" && this.nodeSelected) {
+        globalType.spinal.eventBus.$emit(
+          "openCollaboratorPanel",
+          "this.nodeSelected"
+        );
+        globalType.spinal.eventBus.$emit("getNodeClick", this.nodeSelected);
+      } else if (btn.action == "comments" && this.nodeSelected) {
+        globalType.spinal.eventBus.$emit(
+          "openCommentsPanel",
+          this.nodeSelected
+        );
+        globalType.spinal.eventBus.$emit("getNodeClick", this.nodeSelected);
       }
     }
   },

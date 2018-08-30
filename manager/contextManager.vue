@@ -100,7 +100,13 @@ export default {
 
 <style scoped>
 .contextManager {
+  width: 100%;
   height: calc(100% - 35px);
+}
+
+.contextManager .md-fab.md-mini.md-fab-bottom-right {
+  z-index: 4;
+  bottom: 30px !important;
 }
 
 .contextManager .editModeStyle {
