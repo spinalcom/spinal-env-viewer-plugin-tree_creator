@@ -3,6 +3,15 @@
   <div class="sharedToolBarContext">
 
     <md-list>
+
+      <md-dialog-prompt :md-active.sync="showLevelModal"
+                        v-model="levelValue"
+                        md-title="Level"
+                        md-input-maxlength="30"
+                        md-input-placeholder="Level..."
+                        md-confirm-text="Done"
+                        @md-confirm="selectLevel3(levelValue)" />
+
       <md-list-item>
         <div class="md-list-item-text">
           <span>{{name}}</span>
@@ -24,7 +33,8 @@
         </md-button>
 
         <md-button class="md-icon-button"
-                   @click.stop="selectLevel3">
+                   @click.stop="showLevelModal = true"
+                   title="filter by level">
           <md-icon>select_all</md-icon>
         </md-button>
 
@@ -53,7 +63,9 @@ export default {
       endpointSelector: null,
       // element: null,
       currentApp: null,
-      editName: false
+      editName: false,
+      showLevelModal: false,
+      levelValue: 4
       // editedName: ""
     };
   },
@@ -106,7 +118,7 @@ export default {
       });
     },
 
-    async selectLevel3() {
+    async selectLevel3(argLevel) {
       let selection = [];
       let instanceTree = viewer.model.getData().instanceTree;
       let rootId = instanceTree.getRootId();
@@ -120,8 +132,9 @@ export default {
             (typeof prop.displayName != "undefined" &&
               typeof prop.displayValue != "undefined" &&
               (prop.displayName == "Base Constraint" &&
-                prop.displayValue == "Level 3")) ||
-            (prop.displayName == "Level" && prop.displayValue == "Level 3")
+                prop.displayValue == "Level " + argLevel)) ||
+            (prop.displayName == "Level" &&
+              prop.displayValue == "Level " + argLevel)
           )
             selection.push(element);
         }
@@ -162,7 +175,8 @@ export default {
           });
         }
       });
-    }
+    },
+    chooseLevel: function(params) {}
   },
   mounted() {
     globalType = typeof window === "undefined" ? global : window;

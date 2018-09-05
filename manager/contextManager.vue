@@ -16,8 +16,10 @@
                      @change="showDialog = $event"></dialog-custom>
 
       <md-button @click="showDialog = true"
-                 class="md-icon-button">
+                 style="border : 1px solid black">
+        <!-- class="md-icon-button" -->
         <md-icon>add</md-icon>
+        Add A Context
       </md-button>
 
       <!-- <md-button @click="editMode = !editMode"

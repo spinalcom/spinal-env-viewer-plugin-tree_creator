@@ -208,24 +208,21 @@ export default {
       this.allIcons = [];
       switch (this.type) {
         case "Globalcontext":
-          this.allIcons.push(this.buttonList.edit);
-
           if (this.editMode) {
+            this.allIcons.push(this.buttonList.edit);
             // this.allIcons.push(this.buttonList.add);
             this.editModeIconsContext();
+            this.allIcons.push(this.buttonList.remove);
           }
 
-          this.allIcons.push(this.buttonList.remove);
           break;
         case "nodeContext":
-          this.allIcons.push(this.buttonList.edit);
-          this.allIcons.push(this.buttonList.isolate);
-
           if (this.editMode) {
+            this.allIcons.push(this.buttonList.edit);
             // this.allIcons.push(this.buttonList.add);
             this.editModeIconsNode();
           }
-
+          this.allIcons.push(this.buttonList.isolate);
           var relations = this.nodeSelected.getRelationsByAppNameByType(
             "linker",
             "link"
@@ -238,10 +235,10 @@ export default {
 
           this.allIcons.push(this.buttonList.documents);
           this.allIcons.push(this.buttonList.notes);
-          this.allIcons.push(this.buttonList.remove);
+          if (this.editMode) this.allIcons.push(this.buttonList.remove);
           break;
         case "spinalNode":
-          this.allIcons.push(this.buttonList.edit);
+          if (this.editMode) this.allIcons.push(this.buttonList.edit);
           this.allIcons.push(this.buttonList.isolate);
           this.buttonList.dashboard.bimObj = false;
           this.allIcons.push(this.buttonList.dashboard);
