@@ -18,6 +18,16 @@
       </div>
     </div>
 
+    <div v-if=" this.context1 != null">
+      <md-radio v-model="radio"
+                :value="'context1'">{{this.context1.name.get()}}({{nodeElement1.name.get()}})</md-radio>
+      <md-radio v-model="radio"
+                value="linker">Linker</md-radio>
+      <md-radio v-if=" this.context2 !=null"
+                v-model="radio"
+                :value="'context2'">{{this.context2.name.get()}}({{nodeElement2.name.get()}})</md-radio>
+    </div>
+
     <div class="md-layout linkerLayout">
       <div>
         <md-button class="md-icon-button"
@@ -27,7 +37,8 @@
       </div>
       <div class="md-layout-item">
         <receive-zone :eventName="'NodeElement1'"
-                      @node="updateNodeElement1"></receive-zone>
+                      @node="updateNodeElement1"
+                      @context="setContext1"></receive-zone>
       </div>
 
       <div class="md-layout-item">
@@ -39,7 +50,8 @@
 
       <div class="md-layout-item">
         <receive-zone :eventName="'NodeElement2'"
-                      @node="updateNodeElement2"></receive-zone>
+                      @node="updateNodeElement2"
+                      @context="setContext2"></receive-zone>
       </div>
 
     </div>
@@ -52,6 +64,7 @@
         <md-table-head>Element1</md-table-head>
         <md-table-head>Relation</md-table-head>
         <md-table-head>Element2</md-table-head>
+        <md-table-head>Application/Context</md-table-head>
         <md-table-head>Actions</md-table-head>
       </md-table-row>
 
@@ -61,6 +74,7 @@
         <md-table-cell>{{item.element1.name.get()}}</md-table-cell>
         <md-table-cell>{{item.relationType}}</md-table-cell>
         <md-table-cell>{{item.element2.name.get()}}</md-table-cell>
+        <md-table-cell>{{item.application}}</md-table-cell>
         <md-table-cell>
           <md-button class="md-icon-button"
                      @click.stop="removeLink(index)">
@@ -101,7 +115,12 @@ export default {
       relation: "link",
       links: [],
       nodeElement1: null,
-      nodeElement2: null
+
+      nodeElement2: null,
+      context1: null,
+      context2: null,
+
+      radio: "linker"
     };
   },
   components: { contextList, sharedToolBar, receiveZone },
@@ -110,9 +129,10 @@ export default {
       for (let index = 0; index < this.links.length; index++) {
         const link = this.links[index];
         link.element1.addToExistingRelationByApp(
-          "linker",
+          link.application,
           link.relationType,
-          link.element2
+          link.element2,
+          link.directed
         );
       }
       this.links = [];
@@ -126,15 +146,41 @@ export default {
     updateNodeElement1: function(value) {
       this.nodeElement1 = value;
     },
+
     updateNodeElement2: function(value) {
       this.nodeElement2 = value;
     },
+    setContext1: function(value) {
+      this.context1 = value;
+    },
+    setContext2: function(value) {
+      this.context2 = value;
+    },
     addLink: function() {
-      this.links.push({
-        element1: this.nodeElement1,
-        relationType: this.relation,
-        element2: this.nodeElement2
-      });
+      let application = "linker";
+      let directed = false;
+      if (this.radio === "context2") {
+        application = this.context2.name.get();
+        this.links.push({
+          element1: this.nodeElement2,
+          relationType: this.relation,
+          element2: this.nodeElement1,
+          application: application,
+          directed: true
+        });
+      } else {
+        if (this.radio === "context1") {
+          application = this.context1.name.get();
+          directed = true;
+        }
+        this.links.push({
+          element1: this.nodeElement1,
+          relationType: this.relation,
+          element2: this.nodeElement2,
+          application: application,
+          directed: directed
+        });
+      }
       console.log(this.links);
     },
     getEvents: function() {},

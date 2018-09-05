@@ -27,6 +27,7 @@ export default {
         this.app = _self.context;
         this.name = this.node.name.get();
         this.$emit("node", this.node);
+        this.$emit("context", this.app);
       });
     }
   },
