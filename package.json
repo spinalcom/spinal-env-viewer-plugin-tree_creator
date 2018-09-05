@@ -1,6 +1,6 @@
 {
   "name": "spinal-env-viewer-plugin-context_studio",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "",
   "main": "index.vue",
   "scripts": {

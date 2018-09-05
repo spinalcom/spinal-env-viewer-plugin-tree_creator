@@ -132,9 +132,11 @@ export default {
             (typeof prop.displayName != "undefined" &&
               typeof prop.displayValue != "undefined" &&
               (prop.displayName == "Base Constraint" &&
-                prop.displayValue == "Level " + argLevel)) ||
+                (prop.displayValue == "Level " + argLevel ||
+                  prop.displayValue == argLevel + "th Floor"))) ||
             (prop.displayName == "Level" &&
-              prop.displayValue == "Level " + argLevel)
+              (prop.displayValue == "Level " + argLevel ||
+                prop.displayValue == argLevel + "th Floor"))
           )
             selection.push(element);
         }
