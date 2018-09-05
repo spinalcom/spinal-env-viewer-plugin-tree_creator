@@ -14,6 +14,18 @@
       <!-- </div> -->
     </div>
 
+    <div v-if="activeRelations!=null && contextSelected!=null && type=='Globalcontext'"
+  
+         v-for="(value,key) in activeRelations"
+         :key="key">
+      <md-checkbox v-model="activeRelations[key]">
+        <div class="text">
+          <small>{{key}}</small>
+        </div>
+        {{key}}:{{value}}
+      </md-checkbox>
+    </div>
+
     <dialog-prompt v-if="nodeSelected"
                    :active="editName"
                    :oldJson="nodeSelected.name.get()"
@@ -46,6 +58,7 @@ export default {
   components: { dialogPrompt, DialogCustom },
   data() {
     return {
+      activeRelations: null,
       type: null,
       allIcons: [],
       vueComponentSelected: null,
@@ -109,6 +122,8 @@ export default {
         _self.type = "Globalcontext";
         _self.contextSelected = el.context;
         _self.nodeSelected = null;
+        this.activeRelations = el.activeRelations;
+        // this.activeRelations = {};
       } else {
         _self.type = "smartConnector";
       }

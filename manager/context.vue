@@ -39,10 +39,12 @@
                     @click="test"
                     v-for="(node,index) in nodeArray"
                     :key="node.name.get()+'-'+index">
+
         <spinal-node style=" padding-left: 5px; !important"
                      :node="node"
                      :context="context"
                      :editMode="editMode"
+                     :activeRelations="activeRelations"
                      :eventName="eventName"></spinal-node>
       </md-list-item>
     </md-list>
@@ -55,6 +57,7 @@ const globalType = typeof window === "undefined" ? global : window;
 
 var EventBus;
 import spinalNode from "./spinalNode.vue";
+import Vue from "vue";
 
 export default {
   name: "context",
@@ -63,7 +66,8 @@ export default {
       nodeArray: [],
       show: false,
       isSelected: false,
-      t1: true
+      t1: true,
+      activeRelations: {}
     };
   },
   computed: {
@@ -89,6 +93,14 @@ export default {
   // },
   components: { spinalNode },
   methods: {
+    initActiveRelations: function() {
+      let relations = this.context.getRelationTypes();
+      for (let index = 0; index < relations.length; index++) {
+        const element = relations[index];
+        Vue.set(this.activeRelations, element.get(), true);
+      }
+      console.log(this.activeRelations);
+    },
     print: function() {
       console.log(this.context);
     },
@@ -183,6 +195,7 @@ export default {
     }
   },
   mounted() {
+    this.initActiveRelations();
     console.log("mounted");
     EventBus = globalType.spinal.eventBus;
     this.getEvents();

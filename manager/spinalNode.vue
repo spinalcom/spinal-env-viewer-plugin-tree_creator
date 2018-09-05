@@ -64,18 +64,26 @@
           </md-menu-content>
         </md-menu> -->
 
+        <!-- <md-button @click="print">
+          <md-icon>print</md-icon>
+        </md-button> -->
+
       </md-list-item>
     </md-list>
 
     <md-list class="test4"
-             v-show="show">
-      <md-list-item @click="test"
+             v-if="show"
+             v-for="(nodeArray,relation) in nodeObj"
+             :key="relation">
+      <md-list-item v-if="activeRelations !=null && activeRelations[relation]"
+                    @click="test"
                     v-for="(childNode,index) in nodeArray"
                     :key="childNode.name.get()+'-'+index">
         <!-- {{childNode.name.get()}} -->
         <spinal-node :node="childNode"
                      :context="context"
                      :editMode="editMode"
+                     :activeRelations="activeRelations"
                      :eventName="eventName"></spinal-node>
       </md-list-item>
     </md-list>
@@ -94,10 +102,10 @@ export default {
     return {
       show: false,
       isSelected: false,
-      nodeArray: []
+         nodeObj: {}
     };
   },
-  props: ["node", "context", "editMode", "eventName"],
+  props: ["node", "context", "editMode", "eventName","activeRelations"],
   components: { spinalNode },
   computed: {
     addActive: function() {
@@ -148,8 +156,8 @@ export default {
       }
       return res;
     },
-    nodeArrayEmpty: function() {
-      return this.nodeArray.length === 0;
+     nodeObjEmpty: function() {
+      return this.nodeObj.length === 0;
     }
   },
   methods: {
@@ -362,8 +370,8 @@ export default {
     //   }
     //   this.nodeArray = res;
     // }
-    updateData: function() {
-      this.nodeArray = this.node.getChildrenByApp(this.context);
+  updateData: function() {
+      this.nodeObj = this.node.getChildrenByAppFiltered(this.context);
     }
   },
   mounted() {
