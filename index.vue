@@ -4,7 +4,7 @@ import contextStudio from "./linker/contextStudio.vue";
 import contextManager from "./manager/contextManager.vue";
 
 require("spinal-env-viewer-plugin-apps");
-var ForgeViewer = require("../spinal-viewer-library/src/forgeViewer.js");
+// var ForgeViewer = require("../spinal-viewer-library/src/forgeViewer.js");
 
 // import appVisualizer from "./apps-visualizer/appVisualizer.vue";
 const ComponentCtor1 = Vue.extend(contextStudio);
@@ -30,7 +30,7 @@ const classExtention = class {
     this.panel1 = null;
     this.panel2 = null;
 
-    window.forgeViewer = new ForgeViewer(this.viewer);
+    // window.forgeViewer = new ForgeViewer(this.viewer);
   }
   load() {
     if (this.viewer.toolbar) {
