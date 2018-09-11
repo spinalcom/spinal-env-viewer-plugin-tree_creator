@@ -6,24 +6,28 @@
          :key="_btn.title"
          @click="clickEvent(_btn)"
          :title="_btn.title">
-      <!-- <div @click="clickEvent(_btn)"
-           :title="_btn.title"> -->
-      <!-- class="md-icon-button" -->
       <md-icon>{{_btn.icon}}</md-icon>
       <div class="text">{{_btn.name}}</div>
-      <!-- </div> -->
+
     </div>
 
-    <div v-if="activeRelations!=null && contextSelected!=null && type=='Globalcontext'"
+    <div class="sidebar_button"
+         v-if="activeRelations != null && contextSelected != null && type == 'Globalcontext'"
   
          v-for="(value,key) in activeRelations"
-         :key="key">
-      <md-checkbox v-model="activeRelations[key]">
-        <div class="text">
-          <small>{{key}}</small>
-        </div>
-        {{key}}:{{value}}
-      </md-checkbox>
+         :key="key"
+         @click="checkBoxClick(activeRelations,key)">
+
+      <!-- <md-checkbox v-model="activeRelations[key]"
+                   class="md-primary"></md-checkbox> -->
+      <md-icon v-if="activeRelations[key]">check_box</md-icon>
+      <md-icon v-if="!activeRelations[key]">check_box_outline_blank</md-icon>
+
+      <div class="text">
+        {{key}}
+      </div>
+      <!-- {{key}}:{{value}} -->
+
     </div>
 
     <dialog-prompt v-if="nodeSelected"
@@ -301,6 +305,9 @@ export default {
         );
         globalType.spinal.eventBus.$emit("getNodeClick", this.nodeSelected);
       }
+    },
+    checkBoxClick: function(relationName, relationKey) {
+      relationName[relationKey] = !relationName[relationKey];
     }
   },
   props: ["editMode", "graph"],
@@ -333,7 +340,8 @@ export default {
   cursor: pointer;
 }
 
-._sidebar .sidebar_button .md-icon {
+._sidebar .sidebar_button .md-icon,
+._sidebar .sidebar_button .md-checkbox {
   height: 50%;
 }
 
