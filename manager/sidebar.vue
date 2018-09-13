@@ -80,8 +80,8 @@ export default {
           action: "edit"
         },
         dashboard: {
-          name: "Open dashBoard",
-          title: "Open dashBoard",
+          name: "DashBoard",
+          title: "DashBoard",
           icon: "show_chart",
           action: "dashboard",
           bimObj: false

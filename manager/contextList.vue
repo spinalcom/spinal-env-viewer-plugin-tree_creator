@@ -52,11 +52,8 @@ export default {
           this.contextList._attribute_names[index]
         ];
         element.load(context => {
-          if(typeof context != "undefined")
-          this.contextArray.push(context);
+          if (typeof context != "undefined") this.contextArray.push(context);
           else console.log("Context Undefined");
-          
-          
         });
       }
     },
@@ -109,5 +106,6 @@ export default {
   height: calc(95% - 40px);
   width: calc(90% - 5px);
   float: right;
+  overflow-y: auto;
 }
 </style>

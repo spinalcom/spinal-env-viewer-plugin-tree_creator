@@ -1,20 +1,18 @@
 
 <template>
-  <div class="sharedToolBarContext">
-
+  <md-content class="sharedToolBarContext">
+    <md-dialog-prompt :md-active.sync="showLevelModal"
+                      v-model="levelValue"
+                      md-title="Level"
+                      md-input-maxlength="30"
+                      md-input-placeholder="Level..."
+                      md-confirm-text="Done"
+                      @md-confirm="selectLevel3(levelValue)" />
     <md-list>
-
-      <md-dialog-prompt :md-active.sync="showLevelModal"
-                        v-model="levelValue"
-                        md-title="Level"
-                        md-input-maxlength="30"
-                        md-input-placeholder="Level..."
-                        md-confirm-text="Done"
-                        @md-confirm="selectLevel3(levelValue)" />
 
       <md-list-item>
         <div class="md-list-item-text">
-          <span>{{name}}</span>
+          <span style="width : 150px">{{name}}</span>
         </div>
 
         <!-- <md-button v-if="self!=null &&self.constructor.name==='SpinalNode'"
@@ -41,7 +39,7 @@
       </md-list-item>
     </md-list>
 
-  </div>
+  </md-content>
 
 </template>
 

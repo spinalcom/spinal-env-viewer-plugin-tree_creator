@@ -103,7 +103,7 @@ export default {
 <style scoped>
 .contextManager {
   width: 100%;
-  height: calc(100% - 35px);
+  height: calc(100% - 45px);
 }
 
 .contextManager .md-fab.md-mini.md-fab-bottom-right {
