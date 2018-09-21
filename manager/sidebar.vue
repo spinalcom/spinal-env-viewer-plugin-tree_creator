@@ -233,7 +233,9 @@
       },
 
       handleShowLabels: function()  {
+        let str = "";
         console.log(this.contextSelected);
+        getContextRelation(this.contextSelected);
       },
 
       getAllIconsByTypes: function() {
@@ -334,6 +336,29 @@
       }
     }
   };
+
+  /**
+   * Depth-First-Search
+   * @param infix is the function to execute before entering the node
+   * @param prefix is the function to execute after leaving the node
+   * @param starting_node is the node where to start the Search
+   */
+  function DFS(starting_node,infix, prefix){
+    const set =  new Set();
+    set.add(starting_node);
+    infix();
+    for (let i = 0; i < starting_node.relationList.length; i++) {
+      ;
+    }
+  }
+
+  /**
+   * this function return a set of all the context relation
+   * @param context_node spinal-context
+   */
+  function getContextRelation(context_node){
+        console.log(context_node.interactions);
+  }
 </script>
 
 <style>
