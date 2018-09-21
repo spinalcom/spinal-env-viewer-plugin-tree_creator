@@ -363,9 +363,9 @@
    console.log("node relation name", relationName);
    console.log("node", node);
    console.log("relations", node.relations);
-   console.log("relations name", node.relations[relationName]);
-   console.log("relations name", node.relations[relationName][0].nodeList2);
-   getChildFromRelation(node.relations[relationName].nodeList2[0])
+   console.log("relations object", node.relations[relationName]);
+   console.log("relations children", node.relations[relationName][0].nodeList2);
+   getChildFromRelation(node.relations[relationName][0].nodeList2[0])
 
   }
 
