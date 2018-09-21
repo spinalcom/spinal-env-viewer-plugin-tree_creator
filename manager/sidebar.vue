@@ -113,11 +113,11 @@
             icon: "border_color",
             action: "comments"
           },
-          view_label:{
+          view_label: {
             name: "view label",
             title: "View label",
-            icon:"remove_red_eye",
-            action:"view_labels"
+            icon: "remove_red_eye",
+            action: "view_labels"
           }
           // add: {
           //   title: "add",
@@ -232,9 +232,9 @@
         }
       },
 
-      handleShowLabels: function()  {
+      handleShowLabels: function() {
         let str = "";
-        getContextRelation(this.contextSelected);
+        console.log(getContextRelation(this.contextSelected));
       },
 
       getAllIconsByTypes: function() {
@@ -284,8 +284,8 @@
       },
       clickEvent: function(btn) {
         // globalType.spinal.eventBus.$emit(btn.action, btn);
-        if (btn.action === "view_labels"){
-          this.handleShowLabels()
+        if (btn.action === "view_labels") {
+          this.handleShowLabels();
         }
         else if (btn.action === "create_context") {
           this.vueComponentSelected.onAddContextElement(btn.model);
@@ -342,8 +342,8 @@
    * @param prefix is the function to execute after leaving the node
    * @param starting_node is the node where to start the Search
    */
-  function DFS(starting_node,infix, prefix){
-    const set =  new Set();
+  function DFS(starting_node, infix, prefix) {
+    const set = new Set();
     set.add(starting_node);
     infix();
     for (let i = 0; i < starting_node.relationList.length; i++) {
@@ -355,18 +355,21 @@
    * this function return a set of all the context relation
    * @param context_node spinal-context
    */
-  function getContextRelation(context_node){
-        console.log(context_node.interactions);
-        const interactions = context_node.interactions;
-        const relations = [];
-    for (let i = 0; i < interactions._attribute_names.length;  i++) {
-        const name = interactions._attribute_names[i];
-        relations.push(interactions[name]);
-//        relations.push(interactions.getAttribute(name)._data);
-        console.log("name", name);
+  function getContextRelation(context_node) {
+    console.log(context_node.interactions);
+    const interactions = context_node.interactions;
+    const relations = new Set([]);
+    for (let i = 0; i < interactions._attribute_names.length; i++) {
+      let name = interactions._attribute_names[i];
+
+      for (let i = 0; u < interactions[name]._attribute_names.length; i++) {
+        let attr_name = interactions[name]._attribute_names[i];
+
+        relations.push(interactions[name][attr_name]._data);
+      }
 
     }
-    console.log("relation", relations);
+    return relations;
   }
 </script>
 
