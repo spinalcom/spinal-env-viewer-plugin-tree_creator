@@ -233,7 +233,7 @@
       },
 
       handleShowLabels: () => {
-        console.log(this.contextSelected);
+        console.log(this);
       },
 
       getAllIconsByTypes: function() {
