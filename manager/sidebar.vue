@@ -364,7 +364,7 @@
 
       for (let i = 0; i < interactions[name]._attribute_names.length; i++) {
         let attr_name = interactions[name]._attribute_names[i];
-        relations.push(interactions[name][attr_name]._data);
+        relations.add(interactions[name][attr_name]._data);
       }
 
     }
