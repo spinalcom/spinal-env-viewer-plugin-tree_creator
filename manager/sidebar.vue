@@ -232,7 +232,7 @@
         }
       },
 
-      handleShowLabels: () => {
+      handleShowLabels: function()  {
         console.log(this);
       },
 
