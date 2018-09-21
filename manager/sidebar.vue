@@ -117,7 +117,7 @@
             name: "view label",
             title: "View label",
             icon:"remove_red_eye",
-            action:""
+            action:"view_labels"
           }
           // add: {
           //   title: "add",
