@@ -234,7 +234,7 @@
 
       handleShowLabels: function() {
         let str = "";
-        console.log(getContextRelation(this.contextSelected));
+        DFSFromSpinalContext(this.contextSelected, ()=>{}, ()=>{});
       },
 
       getAllIconsByTypes: function() {
@@ -340,23 +340,35 @@
    * Depth-First-Search
    * @param infix is the function to execute before entering the node
    * @param prefix is the function to execute after leaving the node
-   * @param starting_node is the node where to start the Search
+   * @param context_node is a spinal-context the node where to start the Search
    */
-  function DFS(starting_node, infix, prefix) {
+  function DFSFromSpinalContext(context_node, infix, prefix) {
     const set = new Set();
-    set.add(starting_node);
+
+    const contextRelation = getContextRelation(context_node);
+    getChildFromRelation(context_node.startingNode, "has");
+    let node = context_node.startingNode;
+    set.add(node.id);
     infix();
-    for (let i = 0; i < starting_node.relationList.length; i++) {
+    for (let i = 0; i < node.relationList.length; i++) {
       ;
     }
+  }
+
+
+  /**
+   *
+   */
+  function getChildFromRelation(node, relationName) {
+   console.log("node", relationName);
   }
 
   /**
    * this function return a set of all the context relation
    * @param context_node spinal-context
+   * @return Set<string> set containing all relations of the context graph
    */
   function getContextRelation(context_node) {
-    console.log(context_node.interactions);
     const interactions = context_node.interactions;
     const relations = new Set([]);
     for (let i = 0; i < interactions._attribute_names.length; i++) {
@@ -366,7 +378,6 @@
         let attr_name = interactions[name]._attribute_names[i];
         relations.add(interactions[name][attr_name]._data);
       }
-
     }
     return relations;
   }
