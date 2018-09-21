@@ -362,7 +362,7 @@
   function getChildFromRelation(node, relationName) {
    console.log("node relation name", relationName);
    console.log("node", node);
-   console.log("relation", node.relations[relationName]);
+   console.log("relation", node.relations);
    console.log("children", node.relations[relationName].nodeList2)
   }
 
