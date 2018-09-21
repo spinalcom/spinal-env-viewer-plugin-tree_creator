@@ -136,6 +136,7 @@ export default {
 
     globalType.spinal.eventBus.$on("nodeContext", el => {
       _self.vueComponentSelected = el;
+      console.log(el.node);
       if (el.context.type.get() == "context") {
         _self.type = "nodeContext";
         _self.contextSelected = el.context;

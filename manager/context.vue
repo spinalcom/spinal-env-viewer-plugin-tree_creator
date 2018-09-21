@@ -83,14 +83,7 @@ export default {
     }
   },
   props: ["context", "editMode", "eventName"],
-  // watch: {
-  //   context: function(newContext, oldContext) {
-  //     if ((newContext != null, oldContext == null)) {
-  //       this.linkToDB();
-  //       console.log("test");
-  //     }
-  //   }
-  // },
+
   components: { spinalNode },
   methods: {
     initActiveRelations: function() {
@@ -99,11 +92,8 @@ export default {
         const element = relations[index];
         Vue.set(this.activeRelations, element.get(), true);
       }
-      console.log(this.activeRelations);
     },
-    print: function() {
-      console.log(this.context);
-    },
+    print: function() {},
     test: function() {},
     sendContext: function() {
       EventBus.$emit("contextContext", this);
@@ -122,7 +112,6 @@ export default {
       globalType.spinal.eventBus.$on("create_context", el => {
         if (el.context._server_id == this.context._server_id) {
           // this.onAddContextElement(el.icon_action.model);
-          console.log("create_context", el);
         }
       });
     },
@@ -188,21 +177,18 @@ export default {
       // );
     },
     sidebarElementClick: function(icon) {
-      console.log("icon clicked", icon);
       if (icon.icon == "add") {
-        console.log("add", icon.model);
       }
     }
   },
   mounted() {
     this.initActiveRelations();
-    console.log("mounted");
+
     EventBus = globalType.spinal.eventBus;
     this.getEvents();
     this.linkToDB();
   },
   beforeUpdated() {
-    console.log("destroy");
     globalType.spinal.eventBus.$off("create_context");
   }
 };
@@ -215,6 +201,14 @@ export default {
 .context > ul:first-child {
   background-color: black;
 }
+
+/* .context .md-list-item-text {
+  width: 90% !important;
+} */
+
+/* .context .md-list-item-text span {
+  width: 80% !important;
+} */
 
 .contextSelect > ul:first-child {
   background-color: #2d3d93;

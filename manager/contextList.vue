@@ -1,6 +1,6 @@
 <template>
   <md-content class='contextList md-scrollbar'>
-    <md-list>
+    <md-list class="_list">
       <md-list-item @click="test"
                     v-for="(context,index) in contextArray"
                     :key="context.name.get()+'-'+index">
@@ -102,10 +102,13 @@ export default {
 
 <style scoped>
 .contextList {
-  overflow-y: auto;
-  height: calc(95% - 40px);
   width: calc(90% - 5px);
+  height: calc(95% - 40px);
   float: right;
   overflow-y: auto;
+}
+
+.contextList ._list {
+  width: 99%;
 }
 </style>

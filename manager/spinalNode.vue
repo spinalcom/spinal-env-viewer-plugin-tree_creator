@@ -102,10 +102,10 @@ export default {
     return {
       show: false,
       isSelected: false,
-         nodeObj: {}
+      nodeObj: {}
     };
   },
-  props: ["node", "context", "editMode", "eventName","activeRelations"],
+  props: ["node", "context", "editMode", "eventName", "activeRelations"],
   components: { spinalNode },
   computed: {
     addActive: function() {
@@ -156,7 +156,7 @@ export default {
       }
       return res;
     },
-     nodeObjEmpty: function() {
+    nodeObjEmpty: function() {
       return this.nodeObj.length === 0;
     }
   },
@@ -370,7 +370,7 @@ export default {
     //   }
     //   this.nodeArray = res;
     // }
-  updateData: function() {
+    updateData: function() {
       this.nodeObj = this.node.getChildrenByAppFiltered(this.context);
     }
   },
