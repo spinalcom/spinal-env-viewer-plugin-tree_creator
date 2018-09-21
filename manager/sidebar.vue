@@ -361,7 +361,8 @@
         const relations = [];
     for (let i = 0; i < interactions._attribute_names.length;  i++) {
         const name = interactions._attribute_names[i];
-        relations.push(interactions.getAttribute(name)._data);
+        console.log(interactions[name]);
+//        relations.push(interactions.getAttribute(name)._data);
         console.log("name", name);
 
     }
