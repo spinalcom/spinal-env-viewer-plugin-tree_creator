@@ -234,7 +234,6 @@
 
       handleShowLabels: function()  {
         let str = "";
-        console.log(this.contextSelected);
         getContextRelation(this.contextSelected);
       },
 
@@ -363,10 +362,10 @@
     for (let i = 0; i < interactions._attribute_names.length;  i++) {
         const name = interactions._attribute_names[i];
         relations.push(interactions.getAttribute(name)._data);
-        console.log(name);
+        console.log("name", name);
 
     }
-    console.log(relations);
+    console.log("relation", relations);
   }
 </script>
 
