@@ -232,6 +232,10 @@
         }
       },
 
+      handleShowLabels: () => {
+        console.log(this.contextSelected);
+      },
+
       getAllIconsByTypes: function() {
         this.allIcons = [];
         switch (this.type) {
@@ -279,36 +283,39 @@
       },
       clickEvent: function(btn) {
         // globalType.spinal.eventBus.$emit(btn.action, btn);
-        if (btn.action == "create_context") {
+        if (btn.action === "view_labels"){
+          this.handleShowLabels()
+        }
+        else if (btn.action === "create_context") {
           this.vueComponentSelected.onAddContextElement(btn.model);
-        } else if (btn.action == "create_node") {
+        } else if (btn.action === "create_node") {
           this.vueComponentSelected.addBySelection(btn.name, false);
-        } else if (btn.action == "isolate") {
+        } else if (btn.action === "isolate") {
           this.vueComponentSelected.isolate();
-        } else if (btn.action == "dashboard" && !btn.bimObj) {
+        } else if (btn.action === "dashboard" && !btn.bimObj) {
           globalType.spinal.eventBus.$emit(
             "openDashboard",
             this.vueComponentSelected
           );
-        } else if (btn.action == "dashboard" && btn.bimObj) {
+        } else if (btn.action === "dashboard" && btn.bimObj) {
           globalType.spinal.eventBus.$emit(
             "dashBoardBimObject",
             this.nodeSelected
           );
-        } else if (btn.action == "edit" && this.nodeSelected) {
+        } else if (btn.action === "edit" && this.nodeSelected) {
           this.editName = true;
-        } else if (btn.action == "edit" && this.nodeSelected == null) {
+        } else if (btn.action === "edit" && this.nodeSelected == null) {
           this.showDialog = true;
-        } else if (btn.action == "remove") {
+        } else if (btn.action === "remove") {
           this.btnClicked = btn;
           this.activeRemove = true;
-        } else if (btn.action == "collaborator" && this.nodeSelected) {
+        } else if (btn.action === "collaborator" && this.nodeSelected) {
           globalType.spinal.eventBus.$emit(
             "openCollaboratorPanel",
             "this.nodeSelected"
           );
           globalType.spinal.eventBus.$emit("getNodeClick", this.nodeSelected);
-        } else if (btn.action == "comments" && this.nodeSelected) {
+        } else if (btn.action === "comments" && this.nodeSelected) {
           globalType.spinal.eventBus.$emit(
             "openCommentsPanel",
             this.nodeSelected
