@@ -366,8 +366,7 @@
    console.log("relations object", node.relations[relationName]);
    console.log("relations children", node.relations[relationName][0].nodeList2);
    getChildFromRelation(node.relations[relationName][0].nodeList2[0], "hasRoom>");
-   getChildFromRelation(node.relations[relationName][0].nodeList2[0], "hasEquipment>")
-
+   getChildFromRelation(node.relations[relationName][0].nodeList2[0], "hasEquipment>");
   }
 
   /**
