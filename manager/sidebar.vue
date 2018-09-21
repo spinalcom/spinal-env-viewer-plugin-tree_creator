@@ -22,7 +22,7 @@
                    class="md-primary"></md-checkbox> -->
       <md-icon v-if="activeRelations[key]">check_box</md-icon>
       <md-icon v-if="!activeRelations[key]">check_box_outline_blank</md-icon>
-
+      <div> test loris</div>
       <div class="text">
         {{key}}
       </div>
