@@ -346,7 +346,7 @@
     const set = new Set();
 
     const contextRelation = getContextRelation(context_node);
-    getChildFromRelation(context_node.startingNode, "has");
+    getChildFromRelation(context_node.startingNode, "has>");
     let node = context_node.startingNode;
     set.add(node.id);
     infix();
@@ -362,8 +362,9 @@
   function getChildFromRelation(node, relationName) {
    console.log("node relation name", relationName);
    console.log("node", node);
-   console.log("relation", node.relations);
-   console.log("children", node.relations[relationName].nodeList2)
+   console.log("relations", node.relations);
+   console.log("relations name", node.relations[relationName]);
+
   }
 
   /**
