@@ -10,7 +10,7 @@
       <div class="text">{{_btn.name}}</div>
 
     </div>
-    <md-icon> remove_red_eye</md-icon>
+    <md-icon v-if="activeRelations[key]">remove_red_eye</md-icon>
     <div class="sidebar_button"
          v-if="activeRelations != null && contextSelected != null && type == 'Globalcontext'"
   
