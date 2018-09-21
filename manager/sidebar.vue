@@ -358,6 +358,13 @@
    */
   function getContextRelation(context_node){
         console.log(context_node.interactions);
+        const interactions = context_node.interactions;
+        const relations = [];
+    for (let i = 0; i < interactions._attribute_names.length;  i++) {
+        const name = interactions._attribute_names[i];
+        relations.push(interactions[name]._data);
+    }
+    console.log(relations);
   }
 </script>
 
