@@ -350,7 +350,7 @@
     let node = context_node.startingNode;
     set.add(node.id);
     infix();
-    for (let i = 0; i < node.relationList.length; i++) {
+    for (let i = 0; i < node.relations.length; i++) {
       ;
     }
   }
@@ -360,7 +360,10 @@
    *
    */
   function getChildFromRelation(node, relationName) {
-   console.log("node", relationName);
+   console.log("node relation name", relationName);
+   console.log("node", node);
+   console.log("relation", node.relations[relationName]);
+   console.log("children", node.relations[relationName].nodeList2)
   }
 
   /**
