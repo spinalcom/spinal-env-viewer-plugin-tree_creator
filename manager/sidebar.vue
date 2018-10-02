@@ -136,9 +136,16 @@ export default {
 
     globalType.spinal.eventBus.$on("nodeContext", el => {
       _self.vueComponentSelected = el;
-      console.log(el.node);
-      if (el.context.type.get() == "context") {
+
+      if (
+        el.context.type.get() == "context" &&
+        el.context.name.get() != "logger"
+      ) {
         _self.type = "nodeContext";
+        _self.contextSelected = el.context;
+        _self.nodeSelected = el.node;
+      } else if (el.context.name.get() == "logger") {
+        _self.type = "logContext";
         _self.contextSelected = el.context;
         _self.nodeSelected = el.node;
       } else {
@@ -265,6 +272,11 @@ export default {
           this.allIcons.push(this.buttonList.documents);
           this.allIcons.push(this.buttonList.notes);
           // this.allIcons.push(this.buttonList.remove);
+          break;
+        case "logContext":
+          if (this.editMode) this.allIcons.push(this.buttonList.edit);
+          this.buttonList.dashboard.bimObj = false;
+          this.allIcons.push(this.buttonList.dashboard);
           break;
       }
     },

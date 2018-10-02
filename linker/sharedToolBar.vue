@@ -81,32 +81,34 @@ export default {
           this.self = _self.node;
           this.currentApp = _self.context;
           this.name = this.self.name.get();
-          this.getDbids(this.self, this.currentApp).then(dbids => {
-            viewer.select(dbids);
-            console.log("*************************************************");
+          if (_self.context.name.get() != "logger") {
+            this.getDbids(this.self, this.currentApp).then(dbids => {
+              viewer.select(dbids);
+              console.log("*************************************************");
 
-            console.log("NODE:", this.self);
-            this.self.getElement().then(el => {
-              console.log("ELEMENT", el);
+              console.log("NODE:", this.self);
+              this.self.getElement().then(el => {
+                console.log("ELEMENT", el);
 
-              if (typeof el.name != "undefined")
-                console.log("NAME:", el.name.get());
+                if (typeof el.name != "undefined")
+                  console.log("NAME:", el.name.get());
 
-              if (typeof el.currentValue != "undefined")
-                console.log("CURRENTVALUE:", el.currentValue.get());
+                if (typeof el.currentValue != "undefined")
+                  console.log("CURRENTVALUE:", el.currentValue.get());
 
-              if (typeof el.unit != "undefined")
-                console.log("unit:", el.unit.get());
-              if (typeof el.path != "undefined")
-                console.log("PATH:", el.path.get());
+                if (typeof el.unit != "undefined")
+                  console.log("unit:", el.unit.get());
+                if (typeof el.path != "undefined")
+                  console.log("PATH:", el.path.get());
+              });
+              // for (let index = 0; index < dbids.length; index++) {
+              //   const element = dbids[index];
+              //   viewer.getProperties(element, r => {
+              //     console.log(r);
+              //   });
+              // }
             });
-            // for (let index = 0; index < dbids.length; index++) {
-            //   const element = dbids[index];
-            //   viewer.getProperties(element, r => {
-            //     console.log(r);
-            //   });
-            // }
-          });
+          }
         }
       });
     }

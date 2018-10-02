@@ -163,16 +163,19 @@ export default {
           this.self = _self.node;
           this.currentApp = _self.context;
           this.name = this.self.name.get();
-          this.getDbids(this.self, this.currentApp).then(dbids => {
-            viewer.select(dbids);
 
-            // for (let index = 0; index < dbids.length; index++) {
-            //   const element = dbids[index];
-            //   viewer.getProperties(element, r => {
-            //     console.log(r);
-            //   });
-            // }
-          });
+          if (_self.context.name.get() != "logger") {
+            this.getDbids(this.self, this.currentApp).then(dbids => {
+              viewer.select(dbids);
+
+              // for (let index = 0; index < dbids.length; index++) {
+              //   const element = dbids[index];
+              //   viewer.getProperties(element, r => {
+              //     console.log(r);
+              //   });
+              // }
+            });
+          }
         }
       });
     },
