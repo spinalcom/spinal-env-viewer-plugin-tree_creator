@@ -5,7 +5,7 @@
     <md-list class="test2"
              @click="sendNode">
       <md-list-item>
-        <md-button v-if="node.hasChildren(context.name.get())"
+        <md-button v-if="node.hasChildren(context.name.get()) && !isAlarmNode(node)"
                    class="md-icon-button test"
                    @click.stop="show = !show">
           <md-icon v-if="show">arrow_drop_down</md-icon>
@@ -15,6 +15,12 @@
                    class="md-icon-button test">
           <md-icon>remove</md-icon>
         </md-button>
+
+        <md-button v-else-if="isAlarmNode(node)"
+                   class="md-icon-button test">
+          <md-icon>error_outline</md-icon>
+        </md-button>
+
         <md-button v-else
                    class="md-icon-button test">
           <md-icon>stop</md-icon>
@@ -372,6 +378,10 @@ export default {
     // }
     updateData: function() {
       this.nodeObj = this.node.getChildrenByAppFiltered(this.context);
+    },
+    isAlarmNode: function(node) {
+      if (node.relations["app_log>"]) return true;
+      return false;
     }
   },
   mounted() {
