@@ -56,7 +56,7 @@
 import dialogPrompt from "./dialogPrompt.vue";
 import DialogCustom from "./DialogCustom.vue";
 const globalType = typeof window === "undefined" ? global : window;
-
+var viewer;
 export default {
   name: "sidebarMenu",
   components: { dialogPrompt, DialogCustom },
@@ -109,6 +109,18 @@ export default {
           title: "comments",
           icon: "border_color",
           action: "comments"
+        },
+        color: {
+          name: "color",
+          title: "color elements",
+          icon: "invert_colors",
+          action: "color"
+        },
+        zoom: {
+          name: "zoom",
+          title: "zoom",
+          icon: "zoom_in",
+          action: "zoom"
         }
         // add: {
         //   title: "add",
@@ -119,6 +131,7 @@ export default {
     };
   },
   mounted() {
+    viewer = globalType.v;
     var _self = this;
     globalType.spinal.eventBus.$on("contextContext", el => {
       _self.vueComponentSelected = el;
@@ -131,6 +144,7 @@ export default {
       } else {
         _self.type = "smartConnector";
       }
+
       _self.getAllIconsByTypes();
     });
 
@@ -274,9 +288,19 @@ export default {
           // this.allIcons.push(this.buttonList.remove);
           break;
         case "logContext":
-          if (this.editMode) this.allIcons.push(this.buttonList.edit);
+          if (this.editMode) {
+            this.allIcons.push(this.buttonList.edit);
+          }
+
           this.buttonList.dashboard.bimObj = false;
           this.allIcons.push(this.buttonList.dashboard);
+          this.allIcons.push(this.buttonList.color);
+          this.allIcons.push(this.buttonList.zoom);
+
+          this.allIcons.push(this.buttonList.documents);
+          this.allIcons.push(this.buttonList.notes);
+
+          if (this.editMode) this.allIcons.push(this.buttonList.remove);
           break;
       }
     },
@@ -317,10 +341,72 @@ export default {
           this.nodeSelected
         );
         globalType.spinal.eventBus.$emit("getNodeClick", this.nodeSelected);
+      } else if (btn.action == "color" && this.nodeSelected) {
+        this.colorElement();
+      } else if (btn.action == "zoom" && this.nodeSelected) {
+        this.zoomOnElement();
       }
     },
     checkBoxClick: function(relationName, relationKey) {
       relationName[relationKey] = !relationName[relationKey];
+    },
+    colorElement: function() {
+      this.nodeSelected.getElement().then(log => {
+        log.endpoint.load(endpointNode => {
+          Promise.all(this.getBimElement(endpointNode)).then(el => {
+            var x = [];
+            for (var i = 0; i < el.length; i++) {
+              x = x.concat(el[i]);
+            }
+
+            viewer.setColorMaterial(x, "#FF4D3F", "1234");
+          });
+        });
+      });
+    },
+    zoomOnElement: function() {
+      this.nodeSelected.getElement().then(log => {
+        log.endpoint.load(endpointNode => {
+          Promise.all(this.getBimElement(endpointNode)).then(el => {
+            var x = [];
+            for (var i = 0; i < el.length; i++) {
+              x = x.concat(el[i]);
+            }
+
+            viewer.fitToView(x);
+          });
+        });
+      });
+    },
+    getDbids: async function(node, app) {
+      let res = [];
+      let element = await node.getElement();
+      if (element.constructor.name === "BIMElement") {
+        res = res.concat(element.id.get());
+      } else if (node.hasChildren()) {
+        let childrenNodes = node.getChildrenByApp(app);
+        for (let index = 0; index < childrenNodes.length; index++) {
+          const childNode = childrenNodes[index];
+          res = res.concat(await this.getDbids(childNode, app));
+        }
+      }
+      return res;
+    },
+    getBimElement: function(endpointNode) {
+      var allBimOjects = [];
+
+      var relations = endpointNode.getRelationsByAppNameByType(
+        "linker",
+        "link"
+      );
+
+      for (var i = 0; i < relations.length; i++) {
+        allBimOjects = allBimOjects.concat(
+          this.getDbids(relations[i].nodeList1[0], "linker")
+        );
+      }
+
+      return allBimOjects;
     }
   },
   props: ["editMode", "graph"],
