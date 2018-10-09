@@ -116,6 +116,12 @@ export default {
           icon: "invert_colors",
           action: "color"
         },
+        reset: {
+          name: "reset color",
+          title: "reset color",
+          icon: "invert_colors_off",
+          action: "reset"
+        },
         zoom: {
           name: "zoom",
           title: "zoom",
@@ -295,6 +301,7 @@ export default {
           this.buttonList.dashboard.bimObj = false;
           this.allIcons.push(this.buttonList.dashboard);
           this.allIcons.push(this.buttonList.color);
+          this.allIcons.push(this.buttonList.reset);
           this.allIcons.push(this.buttonList.zoom);
 
           this.allIcons.push(this.buttonList.documents);
@@ -343,6 +350,8 @@ export default {
         globalType.spinal.eventBus.$emit("getNodeClick", this.nodeSelected);
       } else if (btn.action == "color" && this.nodeSelected) {
         this.colorElement();
+      } else if (btn.action == "reset" && this.nodeSelected) {
+        this.colorElement(true);
       } else if (btn.action == "zoom" && this.nodeSelected) {
         this.zoomOnElement();
       }
@@ -350,7 +359,7 @@ export default {
     checkBoxClick: function(relationName, relationKey) {
       relationName[relationKey] = !relationName[relationKey];
     },
-    colorElement: function() {
+    colorElement: function(reset = null) {
       this.nodeSelected.getElement().then(log => {
         log.endpoint.load(endpointNode => {
           Promise.all(this.getBimElement(endpointNode)).then(el => {
@@ -358,8 +367,11 @@ export default {
             for (var i = 0; i < el.length; i++) {
               x = x.concat(el[i]);
             }
-
-            viewer.setColorMaterial(x, "#FF4D3F", "1234");
+            if (reset) {
+              viewer.restoreColorMaterial(x, "#FF4D3F", "1234");
+            } else {
+              viewer.setColorMaterial(x, "#FF4D3F", "1234");
+            }
           });
         });
       });
