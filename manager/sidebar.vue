@@ -11,6 +11,11 @@
 
     </div>
 
+    <div v-if="showColorDiv"
+         class="color_div">
+      <md-icon>color_lens</md-icon>
+    </div>
+
     <div class="sidebar_button"
          v-if="activeRelations != null && contextSelected != null && type == 'Globalcontext'"
   
@@ -55,6 +60,8 @@
 <script>
 import dialogPrompt from "./dialogPrompt.vue";
 import DialogCustom from "./DialogCustom.vue";
+import spinalColorManager from "../spinalColor.js";
+
 const globalType = typeof window === "undefined" ? global : window;
 var viewer;
 export default {
@@ -62,6 +69,8 @@ export default {
   components: { dialogPrompt, DialogCustom },
   data() {
     return {
+      colorSetting: null,
+      showColorDiv: false,
       activeRelations: null,
       type: null,
       allIcons: [],
@@ -120,7 +129,7 @@ export default {
           name: "reset color",
           title: "reset color",
           icon: "invert_colors_off",
-          action: "reset"
+          action: "color"
         },
         zoom: {
           name: "zoom",
@@ -128,11 +137,6 @@ export default {
           icon: "zoom_in",
           action: "zoom"
         }
-        // add: {
-        //   title: "add",
-        //   icon: "add",
-        //   disabled: false
-        // }
       }
     };
   },
@@ -164,6 +168,18 @@ export default {
         _self.type = "nodeContext";
         _self.contextSelected = el.context;
         _self.nodeSelected = el.node;
+        /***********************  A Vraiment Modifier  ***************************** */
+
+        spinalColorManager.getColorIcons(
+          el.node,
+          el.context.name.get(),
+          (color, show) => {
+            this.colorSetting = color;
+            this.showColorDiv = show;
+          }
+        );
+
+        /*********************** Fin    ***************************** */
       } else if (el.context.name.get() == "logger") {
         _self.type = "logContext";
         _self.contextSelected = el.context;
@@ -176,6 +192,11 @@ export default {
     });
   },
   methods: {
+    /**
+     *
+     * cette fonction verifie l'element (context ou spinalNode) à supprimer et appelle la fonction correspondante
+     *
+     * */
     onConfirm: function() {
       if (this.btnClicked.action == "remove" && this.nodeSelected) {
         this.removeNodeContext();
@@ -187,12 +208,19 @@ export default {
       }
       this.activeRemove = false;
     },
+
+    /**
+     * fonction pour supprimer un context
+     *
+     */
     removeContext: function() {
       this.graph.appsList.rem_attr(this.contextSelected.name.get());
       this.graph.appsListByType.context.rem_attr(
         this.contextSelected.name.get()
       );
     },
+
+    //fonction pour supprimer un spinalNode
     removeNodeContext: function() {
       var relations = this.nodeSelected.getRelationsByAppName(
         this.contextSelected.name.get()
@@ -203,6 +231,11 @@ export default {
         relation.removeFromNodeList2(this.nodeSelected);
       }
     },
+
+    /***
+     * cette fonction est appélée après avoir cliqué sur le boutton OK du modal dialog-prompt,
+     * elle permet de renommer un spinalNode
+     * */
     handlePrompt: function(value) {
       // this.editedName = value;
       this.editName = false;
@@ -211,6 +244,11 @@ export default {
         ele.name.set(value);
       });
     },
+    /**
+     * Cette fonction recupère les elements d'un context, et ajoute les icon add de l'element au sidebar.
+     * Exemple: un contexte geographique qui a building, etage et salle comme elements aura dans le sidebar
+     * 3 buttons "add building", "add etage" et "add salle"
+     */
     editModeIconsContext: function() {
       for (var i = 0; i < this.contextSelected.models.length; i++) {
         const element = this.contextSelected.models[i];
@@ -227,6 +265,12 @@ export default {
         }
       }
     },
+
+    /**
+     * Cette fonction recupère les elements d'un spinalNode, et ajoute les icon add de l'element au sidebar.
+     * Exemple: un spinalNode building qui a  etage et salle comme elements aura dans le sidebar
+     * 2 buttons "add etage" et "add salle"
+     */
     editModeIconsNode: function() {
       if (
         typeof this.nodeSelected.type != "undefined" &&
@@ -254,6 +298,9 @@ export default {
     getAllIconsByTypes: function() {
       this.allIcons = [];
       switch (this.type) {
+        /***
+         * context selectionner
+         */
         case "Globalcontext":
           if (this.editMode) {
             this.allIcons.push(this.buttonList.edit);
@@ -263,6 +310,7 @@ export default {
           }
 
           break;
+
         case "nodeContext":
           if (this.editMode) {
             this.allIcons.push(this.buttonList.edit);
@@ -282,7 +330,9 @@ export default {
 
           this.allIcons.push(this.buttonList.documents);
           this.allIcons.push(this.buttonList.notes);
+
           if (this.editMode) this.allIcons.push(this.buttonList.remove);
+
           break;
         case "spinalNode":
           if (this.editMode) this.allIcons.push(this.buttonList.edit);
@@ -292,67 +342,124 @@ export default {
           this.allIcons.push(this.buttonList.documents);
           this.allIcons.push(this.buttonList.notes);
           // this.allIcons.push(this.buttonList.remove);
+
           break;
         case "logContext":
-          if (this.editMode) {
-            this.allIcons.push(this.buttonList.edit);
-          }
-
-          this.buttonList.dashboard.bimObj = false;
-          this.allIcons.push(this.buttonList.dashboard);
-          this.allIcons.push(this.buttonList.color);
-          this.allIcons.push(this.buttonList.reset);
-          this.allIcons.push(this.buttonList.zoom);
-
-          this.allIcons.push(this.buttonList.documents);
-          this.allIcons.push(this.buttonList.notes);
-
-          if (this.editMode) this.allIcons.push(this.buttonList.remove);
+          this.getLogIcons();
           break;
       }
+    },
+    getLogIcons: function() {
+      this.allIcons = [];
+
+      this.nodeSelected.getElement().then(log => {
+        if (!log.isColored) {
+          log.add_attr({
+            isColored: false
+          });
+        }
+
+        if (this.editMode) {
+          this.allIcons.push(this.buttonList.edit);
+        }
+
+        if (!log.isColored.get()) {
+          this.allIcons.push(this.buttonList.color);
+        } else {
+          this.allIcons.push(this.buttonList.reset);
+        }
+
+        this.buttonList.dashboard.bimObj = false;
+        this.allIcons.push(this.buttonList.dashboard);
+        // this.allIcons.push(this.buttonList.color);
+        // this.allIcons.push(this.buttonList.reset);
+
+        this.allIcons.push(this.buttonList.zoom);
+
+        this.allIcons.push(this.buttonList.documents);
+        this.allIcons.push(this.buttonList.notes);
+
+        if (this.editMode) this.allIcons.push(this.buttonList.remove);
+      });
     },
     clickEvent: function(btn) {
       // globalType.spinal.eventBus.$emit(btn.action, btn);
       if (btn.action == "create_context") {
         this.vueComponentSelected.onAddContextElement(btn.model);
       } else if (btn.action == "create_node") {
+        /**
+         * ajouter un element à un Node ou contexte
+         */
         this.vueComponentSelected.addBySelection(btn.name, false);
       } else if (btn.action == "isolate") {
+        /***
+         * Button Isolate
+         */
         this.vueComponentSelected.isolate();
       } else if (btn.action == "dashboard" && !btn.bimObj) {
+        /**
+         * Condition executée si l'element selectionner n'est pas un bimObject
+         */
         globalType.spinal.eventBus.$emit(
           "openDashboard",
           this.vueComponentSelected
         );
       } else if (btn.action == "dashboard" && btn.bimObj) {
+        /**
+         * Condition executée si l'element selectionner est un bimObject
+         */
         globalType.spinal.eventBus.$emit(
           "dashBoardBimObject",
           this.nodeSelected
         );
       } else if (btn.action == "edit" && this.nodeSelected) {
+        /**
+         * Afficher Le Modal pour renommer
+         */
         this.editName = true;
       } else if (btn.action == "edit" && this.nodeSelected == null) {
+        /***
+         * Modifier un contexte
+         */
         this.showDialog = true;
       } else if (btn.action == "remove") {
+        /***
+         * Supprimer un contexte ou un node
+         */
         this.btnClicked = btn;
         this.activeRemove = true;
       } else if (btn.action == "collaborator" && this.nodeSelected) {
+        /**
+         * Collaborator
+         */
         globalType.spinal.eventBus.$emit(
           "openCollaboratorPanel",
           "this.nodeSelected"
         );
         globalType.spinal.eventBus.$emit("getNodeClick", this.nodeSelected);
       } else if (btn.action == "comments" && this.nodeSelected) {
+        /**
+         * Comments
+         */
         globalType.spinal.eventBus.$emit(
           "openCommentsPanel",
           this.nodeSelected
         );
         globalType.spinal.eventBus.$emit("getNodeClick", this.nodeSelected);
       } else if (btn.action == "color" && this.nodeSelected) {
+        /**
+         * Colorier un item
+         */
         this.colorElement();
-      } else if (btn.action == "reset" && this.nodeSelected) {
-        this.colorElement(true);
+        // } else if (btn.action == "reset" && this.nodeSelected) {
+        //   /**
+        //    * Restaure la couleur
+        //    */
+        //   this.colorElement(true);
       } else if (btn.action == "zoom" && this.nodeSelected) {
+        /***
+         * Zoom
+         */
         this.zoomOnElement();
       }
     },
@@ -361,17 +468,26 @@ export default {
     },
     colorElement: function(reset = null) {
       this.nodeSelected.getElement().then(log => {
+        // if (!log.isColored) {
+        //   log.add_attr({
+        //     isColored: false
+        //   });
+        // }
+
         log.endpoint.load(endpointNode => {
           Promise.all(this.getBimElement(endpointNode)).then(el => {
             var x = [];
             for (var i = 0; i < el.length; i++) {
               x = x.concat(el[i]);
             }
-            if (reset) {
+
+            if (log.isColored.get()) {
               viewer.restoreColorMaterial(x, "#FF4D3F", "1234");
             } else {
               viewer.setColorMaterial(x, "#FF4D3F", "1234");
             }
+            this.getLogIcons();
+            log.isColored.set(!log.isColored.get());
           });
         });
       });

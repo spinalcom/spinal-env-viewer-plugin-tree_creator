@@ -380,7 +380,7 @@ export default {
       this.nodeObj = this.node.getChildrenByAppFiltered(this.context);
     },
     isAlarmNode: function(node) {
-      if (node.relations["app_log>"]) return true;
+      if (node.relations["hasLog<"]) return true;
       return false;
     }
   },
