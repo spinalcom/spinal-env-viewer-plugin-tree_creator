@@ -53,6 +53,8 @@ var SpinalColorManager = class SpinalColorManager {
             absElement.rem_attr("colorParams")
           }
         }
+
+        console.log("yes callback called")
         callback(absElement.colorParams, el);
 
       })

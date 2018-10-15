@@ -11,10 +11,10 @@
 
     </div>
 
-    <div v-if="showColorDiv"
+    <!-- <div v-if="showColorDiv"
          class="color_div">
       <md-icon>color_lens</md-icon>
-    </div>
+    </div> -->
 
     <div class="sidebar_button"
          v-if="activeRelations != null && contextSelected != null && type == 'Globalcontext'"
@@ -34,6 +34,8 @@
       <!-- {{key}}:{{value}} -->
 
     </div>
+
+    <color-dialog :showDialog="seeColorDialog"></color-dialog>
 
     <dialog-prompt v-if="nodeSelected"
                    :active="editName"
@@ -61,14 +63,17 @@
 import dialogPrompt from "./dialogPrompt.vue";
 import DialogCustom from "./DialogCustom.vue";
 import spinalColorManager from "../spinalColor.js";
+import colorDialog from "./colorDialog.vue";
+
 
 const globalType = typeof window === "undefined" ? global : window;
 var viewer;
 export default {
   name: "sidebarMenu",
-  components: { dialogPrompt, DialogCustom },
+  components: { dialogPrompt, DialogCustom, colorDialog },
   data() {
     return {
+      seeColorDialog: false,
       colorSetting: null,
       showColorDiv: false,
       activeRelations: null,
@@ -136,6 +141,19 @@ export default {
           title: "zoom",
           icon: "zoom_in",
           action: "zoom"
+        },
+        seeBimObjects: {
+          name: "see bimObject",
+          title: "Color all bimObject",
+          icon: "remove_red_eye",
+          action: "seeBimObjects"
+          
+        },
+        configureColor: {
+          name: "configure Color",
+          title: "configure Color",
+          icon: "color_lens",
+          action: "configureColor"
         }
       }
     };
@@ -168,18 +186,7 @@ export default {
         _self.type = "nodeContext";
         _self.contextSelected = el.context;
         _self.nodeSelected = el.node;
-        /***********************  A Vraiment Modifier  ***************************** */
-
-        spinalColorManager.getColorIcons(
-          el.node,
-          el.context.name.get(),
-          (color, show) => {
-            this.colorSetting = color;
-            this.showColorDiv = show;
-          }
-        );
-
-        /*********************** Fin    ***************************** */
+        
       } else if (el.context.name.get() == "logger") {
         _self.type = "logContext";
         _self.contextSelected = el.context;
@@ -331,6 +338,22 @@ export default {
           this.allIcons.push(this.buttonList.documents);
           this.allIcons.push(this.buttonList.notes);
 
+          /***********************  A Vraiment Modifier  ***************************** */
+
+        spinalColorManager.getColorIcons(
+          this.nodeSelected,
+          this.contextSelected.name.get(),
+          (color, show) => {
+            this.colorSetting = color;
+            this.allIcons.push(this.buttonList.seeBimObjects);
+            if(show) {
+              this.allIcons.push(this.buttonList.configureColor);
+            }
+          }
+        );
+
+        /*********************** Fin    ***************************** */
+
           if (this.editMode) this.allIcons.push(this.buttonList.remove);
 
           break;
@@ -461,6 +484,8 @@ export default {
          * Zoom
          */
         this.zoomOnElement();
+      } else if(btn.action == "configureColor") {
+        this.seeColorDialog = true;
       }
     },
     checkBoxClick: function(relationName, relationKey) {
