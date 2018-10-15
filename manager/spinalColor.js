@@ -70,7 +70,7 @@ var SpinalColorManager = class SpinalColorManager {
       var child = await children[i].getElement();
       if (child.constructor.name == "BIMElement") {
         bimElements.push(children[i]);
-      } else {
+      } else if(child.constructor.name == "AbstractElement") {
         abstractElement.push(children[i]);
       }
     }
