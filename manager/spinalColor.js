@@ -97,9 +97,23 @@ var SpinalColorManager = class SpinalColorManager {
   //   return res;
   // }
 
+
+  async verifyAbstractElement(abstract){
+    var element = await abstract.getElement();
+    if(!element.colorParams) {
+      element.add_attr({
+        colorParams: {
+          value: "#000000"
+        }
+      })
+    }
+  }
+
+
   async colorBimElementInViewer(contextSelected, nodeElement, bimElements,
     viewer, show) {
     var absElement = await nodeElement.getElement();
+
     var dbIs = [];
 
     for (var i = 0; i < bimElements.length; i++) {
@@ -128,6 +142,7 @@ var SpinalColorManager = class SpinalColorManager {
 
     if (el.abstractElement.length > 0) {
       for (var i = 0; i < el.abstractElement.length; i++) {
+        await this.verifyAbstractElement(el.abstractElement[i]);
         await this.seeColorNodeElement(contextSelected, el.abstractElement[
             i], appName,
           viewer, show);
