@@ -45,7 +45,8 @@
                      :context="context"
                      :editMode="editMode"
                      :activeRelations="activeRelations"
-                     :eventName="eventName"></spinal-node>
+                     :eventName="eventName"
+                     :seeInViewer="seeInViewer"></spinal-node>
       </md-list-item>
     </md-list>
 
@@ -67,7 +68,9 @@ export default {
       show: false,
       isSelected: false,
       t1: true,
-      activeRelations: {}
+      activeRelations: {},
+
+      seeInViewer: false //ajouter pour colorier ses nodes
     };
   },
   computed: {

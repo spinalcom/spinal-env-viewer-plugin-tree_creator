@@ -35,7 +35,9 @@
 
     </div>
 
-    <color-dialog :showDialog="seeColorDialog"></color-dialog>
+    <color-dialog :showDialog="seeColorDialog"
+                  :nodeSelected="nodeSelected"
+                  @closeColorDialog="closeColorDialog"></color-dialog>
 
     <dialog-prompt v-if="nodeSelected"
                    :active="editName"
@@ -62,9 +64,8 @@
 <script>
 import dialogPrompt from "./dialogPrompt.vue";
 import DialogCustom from "./DialogCustom.vue";
-import spinalColorManager from "../spinalColor.js";
+import spinalColorManager from "./spinalColor.js";
 import colorDialog from "./colorDialog.vue";
-
 
 const globalType = typeof window === "undefined" ? global : window;
 var viewer;
@@ -145,9 +146,14 @@ export default {
         seeBimObjects: {
           name: "see bimObject",
           title: "Color all bimObject",
-          icon: "remove_red_eye",
+          icon: "invert_colors",
           action: "seeBimObjects"
-          
+        },
+        hideBimObjects: {
+          name: "hide bimObject",
+          title: "reset all bimObject",
+          icon: "invert_colors_off",
+          action: "hideBimObjects"
         },
         configureColor: {
           name: "configure Color",
@@ -186,7 +192,6 @@ export default {
         _self.type = "nodeContext";
         _self.contextSelected = el.context;
         _self.nodeSelected = el.node;
-        
       } else if (el.context.name.get() == "logger") {
         _self.type = "logContext";
         _self.contextSelected = el.context;
@@ -199,6 +204,10 @@ export default {
     });
   },
   methods: {
+    closeColorDialog: function() {
+      this.seeColorDialog = false;
+    },
+
     /**
      *
      * cette fonction verifie l'element (context ou spinalNode) à supprimer et appelle la fonction correspondante
@@ -316,6 +325,9 @@ export default {
             this.allIcons.push(this.buttonList.remove);
           }
 
+          this.allIcons.push(this.buttonList.seeBimObjects);
+          this.allIcons.push(this.buttonList.hideBimObjects);
+
           break;
 
         case "nodeContext":
@@ -340,19 +352,21 @@ export default {
 
           /***********************  A Vraiment Modifier  ***************************** */
 
-        spinalColorManager.getColorIcons(
-          this.nodeSelected,
-          this.contextSelected.name.get(),
-          (color, show) => {
-            this.colorSetting = color;
-            this.allIcons.push(this.buttonList.seeBimObjects);
-            if(show) {
-              this.allIcons.push(this.buttonList.configureColor);
-            }
-          }
-        );
+          spinalColorManager.getColorIcons(
+            this.nodeSelected,
+            this.contextSelected.name.get(),
+            (color, show) => {
+              this.colorSetting = color;
+              this.allIcons.push(this.buttonList.seeBimObjects);
+              this.allIcons.push(this.buttonList.hideBimObjects);
 
-        /*********************** Fin    ***************************** */
+              if (show) {
+                this.allIcons.push(this.buttonList.configureColor);
+              }
+            }
+          );
+
+          /*********************** Fin    ***************************** */
 
           if (this.editMode) this.allIcons.push(this.buttonList.remove);
 
@@ -484,8 +498,33 @@ export default {
          * Zoom
          */
         this.zoomOnElement();
-      } else if(btn.action == "configureColor") {
+      } else if (btn.action == "configureColor") {
         this.seeColorDialog = true;
+      } else if (
+        btn.action == "seeBimObjects" ||
+        btn.action == "hideBimObjects"
+      ) {
+        var show = btn.action == "seeBimObjects";
+
+        if (this.nodeSelected) {
+          //SeeNodeElement
+          spinalColorManager.seeColorNodeElement(
+            this.vueComponentSelected,
+            this.nodeSelected,
+            this.contextSelected.name.get(),
+            viewer,
+            show
+          );
+        } else {
+          //SeeContextElement
+          spinalColorManager.seeColorNodeElement(
+            this.vueComponentSelected,
+            this.contextSelected.startingNode,
+            this.contextSelected.name.get(),
+            viewer,
+            show
+          );
+        }
       }
     },
     checkBoxClick: function(relationName, relationKey) {

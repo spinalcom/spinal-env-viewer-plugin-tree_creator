@@ -90,7 +90,8 @@
                      :context="context"
                      :editMode="editMode"
                      :activeRelations="activeRelations"
-                     :eventName="eventName"></spinal-node>
+                     :eventName="eventName"
+                     :seeInViewer="seeInViewer"></spinal-node>
       </md-list-item>
     </md-list>
 
@@ -111,7 +112,14 @@ export default {
       nodeObj: {}
     };
   },
-  props: ["node", "context", "editMode", "eventName", "activeRelations"],
+  props: [
+    "node",
+    "context",
+    "editMode",
+    "eventName",
+    "activeRelations",
+    "seeInViewer"
+  ],
   components: { spinalNode },
   computed: {
     addActive: function() {
