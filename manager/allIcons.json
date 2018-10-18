@@ -1,0 +1,75 @@
+{
+  "edit": {
+    "name": "Edit",
+    "title": "Edit",
+    "icon": "edit",
+    "action": "edit"
+  },
+  "dashboard": {
+    "name": "DashBoard",
+    "title": "DashBoard",
+    "icon": "show_chart",
+    "action": "dashboard",
+    "bimObj": false
+  },
+  "isolate": {
+    "name": "Isolate",
+    "title": "Isolate",
+    "icon": "all_out",
+    "action": "isolate"
+  },
+  "remove": {
+    "name": "remove",
+    "title": "remove",
+    "icon": "delete",
+    "action": "remove"
+  },
+  "documents": {
+    "name": "collaborator",
+    "title": "collaborator",
+    "icon": "folder",
+    "action": "collaborator"
+  },
+  "notes": {
+    "name": "comments",
+    "title": "comments",
+    "icon": "border_color",
+    "action": "comments"
+  },
+  "color": {
+    "name": "color",
+    "title": "color elements",
+    "icon": "invert_colors",
+    "action": "color"
+  },
+  "reset": {
+    "name": "reset color",
+    "title": "reset color",
+    "icon": "invert_colors_off",
+    "action": "color"
+  },
+  "zoom": {
+    "name": "zoom",
+    "title": "zoom",
+    "icon": "zoom_in",
+    "action": "zoom"
+  },
+  "seeBimObjects": {
+    "name": "see bimObject",
+    "title": "Color all bimObject",
+    "icon": "invert_colors",
+    "action": "seeBimObjects"
+  },
+  "hideBimObjects": {
+    "name": "hide bimObject",
+    "title": "reset all bimObject",
+    "icon": "invert_colors_off",
+    "action": "hideBimObjects"
+  },
+  "configureColor": {
+    "name": "configure Color",
+    "title": "configure Color",
+    "icon": "color_lens",
+    "action": "configureColor"
+  }
+}

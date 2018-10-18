@@ -1,5 +1,5 @@
 <template>
-  <md-content class="_sidebar">
+  <md-content class="_sidebar md-scrollbar">
 
     <div class="sidebar_button"
          v-for="_btn in allIcons"
@@ -18,7 +18,6 @@
 
     <div class="sidebar_button"
          v-if="activeRelations != null && contextSelected != null && type == 'Globalcontext'"
-  
          v-for="(value,key) in activeRelations"
          :key="key"
          @click="checkBoxClick(activeRelations,key)">
@@ -312,72 +311,19 @@ export default {
     },
 
     getAllIconsByTypes: function() {
-      this.allIcons = [];
       switch (this.type) {
         /***
          * context selectionner
          */
         case "Globalcontext":
-          if (this.editMode) {
-            this.allIcons.push(this.buttonList.edit);
-            // this.allIcons.push(this.buttonList.add);
-            this.editModeIconsContext();
-            this.allIcons.push(this.buttonList.remove);
-          }
-
-          this.allIcons.push(this.buttonList.seeBimObjects);
-          this.allIcons.push(this.buttonList.hideBimObjects);
-
+          this.getGlobalContextIcons();
           break;
 
         case "nodeContext":
-          if (this.editMode) {
-            this.allIcons.push(this.buttonList.edit);
-            // this.allIcons.push(this.buttonList.add);
-            this.editModeIconsNode();
-          }
-          this.allIcons.push(this.buttonList.isolate);
-          var relations = this.nodeSelected.getRelationsByAppNameByType(
-            "linker",
-            "link"
-          );
-
-          if (relations.length > 0) {
-            this.buttonList.dashboard.bimObj = true;
-            this.allIcons.push(this.buttonList.dashboard);
-          }
-
-          this.allIcons.push(this.buttonList.documents);
-          this.allIcons.push(this.buttonList.notes);
-
-          /***********************  A Vraiment Modifier  ***************************** */
-
-          spinalColorManager.getColorIcons(
-            this.nodeSelected,
-            this.contextSelected.name.get(),
-            (color, show) => {
-              this.colorSetting = color;
-              this.allIcons.push(this.buttonList.seeBimObjects);
-              this.allIcons.push(this.buttonList.hideBimObjects);
-
-              if (show) {
-                this.allIcons.push(this.buttonList.configureColor);
-              }
-            }
-          );
-
-          /*********************** Fin    ***************************** */
-
-          if (this.editMode) this.allIcons.push(this.buttonList.remove);
-
+          this.getNodeContextIcons();
           break;
         case "spinalNode":
-          if (this.editMode) this.allIcons.push(this.buttonList.edit);
-          this.allIcons.push(this.buttonList.isolate);
-          this.buttonList.dashboard.bimObj = false;
-          this.allIcons.push(this.buttonList.dashboard);
-          this.allIcons.push(this.buttonList.documents);
-          this.allIcons.push(this.buttonList.notes);
+          this.getSpinalNodeIcons();
           // this.allIcons.push(this.buttonList.remove);
 
           break;
@@ -386,6 +332,8 @@ export default {
           break;
       }
     },
+    
+    /****** Fonctions permettant de recuperer les icons dans le sidebar.******* */
     getLogIcons: function() {
       this.allIcons = [];
 
@@ -419,7 +367,91 @@ export default {
         if (this.editMode) this.allIcons.push(this.buttonList.remove);
       });
     },
-    clickEvent: function(btn) {
+    getNodeContextIcons: function() {
+      this.allIcons = [];
+      if (this.editMode) {
+            this.allIcons.push(this.buttonList.edit);
+            // this.allIcons.push(this.buttonList.add);
+            this.editModeIconsNode();
+          }
+          this.allIcons.push(this.buttonList.isolate);
+          var relations = this.nodeSelected.getRelationsByAppNameByType(
+            "linker",
+            "link"
+          );
+
+          if (relations.length > 0) {
+            this.buttonList.dashboard.bimObj = true;
+            this.allIcons.push(this.buttonList.dashboard);
+          }
+
+          this.allIcons.push(this.buttonList.documents);
+          this.allIcons.push(this.buttonList.notes);
+
+          /***********************  A Vraiment Modifier  ***************************** */
+
+          spinalColorManager.getColorIcons(
+            this.nodeSelected,
+            this.contextSelected.name.get(),
+            (color, show) => {
+              this.colorSetting = color;
+              if(this.colorSetting.isVisible.get()) {
+                this.allIcons.push(this.buttonList.hideBimObjects);
+              } else {
+                this.allIcons.push(this.buttonList.seeBimObjects);
+              }
+              
+              
+
+              if (show) {
+                this.allIcons.push(this.buttonList.configureColor);
+              }
+            }
+          );
+
+          /*********************** Fin    ***************************** */
+
+          if (this.editMode) this.allIcons.push(this.buttonList.remove);
+
+    },
+    getGlobalContextIcons: function() {
+      this.allIcons = [];
+      if (this.editMode) {
+        this.allIcons.push(this.buttonList.edit);
+        // this.allIcons.push(this.buttonList.add);
+        this.editModeIconsContext();
+        this.allIcons.push(this.buttonList.remove);
+      }
+
+      this.contextSelected.startingNode.getElement().then(el => {
+
+        if(el.colorParams && el.colorParams.isVisible.get()) {
+          this.allIcons.push(this.buttonList.hideBimObjects);
+        } else {
+          this.allIcons.push(this.buttonList.seeBimObjects);
+        }
+
+      })
+
+      
+      
+
+    },
+    getSpinalNodeIcons: function() {
+      this.allIcons = [];
+      if (this.editMode) this.allIcons.push(this.buttonList.edit);
+          this.allIcons.push(this.buttonList.isolate);
+          this.buttonList.dashboard.bimObj = false;
+          this.allIcons.push(this.buttonList.dashboard);
+          this.allIcons.push(this.buttonList.documents);
+          this.allIcons.push(this.buttonList.notes);
+    },
+
+  /**************************************** Fin  */
+
+
+    /***** Fonction executée lorsqu'on clique sur un button du sidebar */
+    clickEvent: async function(btn) {
       // globalType.spinal.eventBus.$emit(btn.action, btn);
       if (btn.action == "create_context") {
         this.vueComponentSelected.onAddContextElement(btn.model);
@@ -506,25 +538,33 @@ export default {
       ) {
         var show = btn.action == "seeBimObjects";
 
-        if (this.nodeSelected) {
+        // if (this.nodeSelected) {
           //SeeNodeElement
-          spinalColorManager.seeColorNodeElement(
+          await spinalColorManager.seeColorNodeElement(
             this.vueComponentSelected,
-            this.nodeSelected,
+            this.nodeSelected ? this.nodeSelected : this.contextSelected.startingNode,
             this.contextSelected.name.get(),
             viewer,
             show
           );
-        } else {
-          //SeeContextElement
-          spinalColorManager.seeColorNodeElement(
-            this.vueComponentSelected,
-            this.contextSelected.startingNode,
-            this.contextSelected.name.get(),
-            viewer,
-            show
-          );
-        }
+
+          if(this.nodeSelected) {
+            this.getNodeContextIcons();
+          } else {
+            this.getGlobalContextIcons();
+          }
+        // } 
+        
+        // else {
+        //   //SeeContextElement
+        //   spinalColorManager.seeColorNodeElement(
+        //     this.vueComponentSelected,
+        //     this.contextSelected.startingNode,
+        //     this.contextSelected.name.get(),
+        //     viewer,
+        //     show
+        //   );
+        // }
       }
     },
     checkBoxClick: function(relationName, relationKey) {
@@ -617,6 +657,7 @@ export default {
   float: left;
   border-right: 1px solid black;
   border-bottom: 1px solid black;
+  overflow-y: auto;
 }
 
 ._sidebar .sidebar_button {

@@ -40,14 +40,14 @@ var SpinalColorManager = class SpinalColorManager {
           if (!absElement.colorParams) {
             absElement.add_attr({
               colorParams: {
-                // isVisible: false,
+                isVisible: false,
                 value: "#000000"
               }
             })
           }
         } else {
           if (absElement.colorParams) {
-            absElement.rem_attr("colorParams")
+            absElement.colorParams.rem_attr("value");
           }
         }
 
@@ -70,7 +70,7 @@ var SpinalColorManager = class SpinalColorManager {
       var child = await children[i].getElement();
       if (child.constructor.name == "BIMElement") {
         bimElements.push(children[i]);
-      } else if(child.constructor.name == "AbstractElement") {
+      } else if (child.constructor.name == "AbstractElement") {
         abstractElement.push(children[i]);
       }
     }
@@ -98,20 +98,26 @@ var SpinalColorManager = class SpinalColorManager {
   // }
 
 
-  async verifyAbstractElement(abstract){
+  async verifyAbstractElement(abstract, appName) {
     var element = await abstract.getElement();
-    if(!element.colorParams) {
-      element.add_attr({
-        colorParams: {
-          value: "#000000"
-        }
-      })
-    }
+
+    this.isBimObjectParent(abstract, appName, (el) => {
+      if (!element.colorParams) {
+        element.add_attr({
+          colorParams: {
+            value: el ? "#000000" : null,
+            isVisible: false
+          }
+        })
+      }
+    })
+
+
   }
 
 
   async colorBimElementInViewer(contextSelected, nodeElement, bimElements,
-    viewer, show) {
+    viewer, appName, show) {
     var absElement = await nodeElement.getElement();
 
     var dbIs = [];
@@ -121,6 +127,7 @@ var SpinalColorManager = class SpinalColorManager {
       dbIs.push(el.id.get());
     }
 
+    await this.verifyParentVisibility(nodeElement, appName);
 
     if (!show) {
       viewer.restoreColorMaterial(dbIs, absElement.id.get());
@@ -130,24 +137,108 @@ var SpinalColorManager = class SpinalColorManager {
     }
 
 
+
   }
 
   async seeColorNodeElement(contextSelected, argNode, appName, viewer, show) {
+    await this.changeIsVisibleAttribut(argNode, show);
     var el = await this.getNodeBimElement(argNode, appName);
 
     if (el.bimElements.length > 0) {
       await this.colorBimElementInViewer(contextSelected, argNode, el.bimElements,
-        viewer, show);
+        viewer, appName, show);
     }
 
     if (el.abstractElement.length > 0) {
       for (var i = 0; i < el.abstractElement.length; i++) {
-        await this.verifyAbstractElement(el.abstractElement[i]);
+        await this.verifyAbstractElement(el.abstractElement[i], appName);
         await this.seeColorNodeElement(contextSelected, el.abstractElement[
             i], appName,
           viewer, show);
       }
     }
+
+  }
+
+  /****** Functions added to change Icon */
+
+  async changeIsVisibleAttribut(argNode, value) {
+    var el = await argNode.getElement();
+    if (!el.colorParams) {
+      el.add_attr({
+        colorParams: {
+          isVisible: value
+        }
+      })
+    } else if (el.colorParams && !el.colorParams.isVisible) {
+      el.colorParams.add_attr({
+        isVisible: value
+      })
+    } else {
+      el.colorParams.isVisible.set(value)
+    }
+  }
+
+  async getNodeParents(argNode) {
+
+    var relations = await argNode.getRelations();
+    var parents = [];
+
+    for (var i = 0; i < relations.length; i++) {
+      let relation = relations[i];
+
+      parents = parents.concat(argNode.getParentsByRelationType(relation.type
+        .get()));
+
+    }
+
+    for (var j = 0; j < parents.length; j++) {
+      let parent = await parents[j].getElement();
+
+      if (parent.constructor.name != "AbstractElement") {
+        parents.splice(j, 1);
+      }
+
+    }
+
+    return parents;
+
+  }
+
+  async verifyParentVisibility(argNode, appName) {
+
+    var parents = await this.getNodeParents(argNode);
+
+    for (var i = 0; i < parents.length; i++) {
+      let parent = parents[i];
+      var allAreVisible = await this.AllChildrenAreVisible(parent, appName);
+
+      if (allAreVisible) {
+        await this.changeIsVisibleAttribut(parent, true);
+      } else {
+        await this.changeIsVisibleAttribut(parent, false);
+      }
+
+      await this.verifyParentVisibility(parent, appName);
+
+    }
+
+  }
+
+  async AllChildrenAreVisible(argNode, appName) {
+    var children = await argNode.getChildrenByApp(appName);
+
+    for (var i = 0; i < children.length; i++) {
+      let child = await children[i].getElement();
+      if (child.constructor.name == "AbstractElement" && !child.colorParams
+        .isVisible.get()) {
+
+        return false;
+
+      }
+    }
+
+    return true;
 
   }
 

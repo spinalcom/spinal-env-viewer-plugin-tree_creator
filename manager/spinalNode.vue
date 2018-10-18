@@ -29,6 +29,12 @@
           <span>{{node.name.get()}}</span>
         </div>
 
+        <md-button v-if="hasColor"
+                   class="md-icon-button"
+                   :style="{backgroundColor: nodeColor}">
+
+        </md-button>
+
         <!-- <md-menu v-if="addActive  &&editMode "
                  md-direction="bottom-start">
           <md-button class="md-icon-button"
@@ -109,7 +115,9 @@ export default {
     return {
       show: false,
       isSelected: false,
-      nodeObj: {}
+      nodeObj: {},
+      hasColor: false,
+      nodeColor: null
     };
   },
   props: [
@@ -222,7 +230,7 @@ export default {
     },
     getEvents: function() {
       globalType.spinal.eventBus.$on("create_node", el => {
-        if (el.context._server_id == this.context._server_id) {
+        if (el.context._servercolorParams_id == this.context._server_id) {
           console.log(this.context.name.get());
           // this.onAddContextElement(el.icon_action.model);
           console.log("create_context", el);
@@ -390,6 +398,18 @@ export default {
     isAlarmNode: function(node) {
       if (node.relations["hasLog<"]) return true;
       return false;
+    },
+    hasColorMethod: function() {
+      this.node.getElement().then(el => {
+        if (el.colorParams && el.colorParams.value) {
+          this.hasColor = true;
+          el.colorParams.value.bind(() => {
+            this.nodeColor = el.colorParams.value.get();
+          });
+        } else {
+          this.hasColor = false;
+        }
+      });
     }
   },
   mounted() {
@@ -397,6 +417,7 @@ export default {
     viewer = globalType.v;
     this.getEvents();
     this.linkToDB();
+    this.hasColorMethod();
   }
 };
 </script>
