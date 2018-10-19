@@ -30,7 +30,7 @@
         </div>
 
         <md-button v-if="hasColor"
-                   class="md-icon-button"
+                   class="md-icon-button color_icon"
                    :style="{backgroundColor: nodeColor}">
 
         </md-button>
@@ -428,6 +428,11 @@ export default {
   padding-left: 15px;
 
   /* border-left: 2px solid rgba(0, 0, 0, 1) !important; */
+}
+
+.color_icon {
+  height: 15px !important;
+  border-radius: 5% !important;
 }
 
 .spinalNodeSelect,
