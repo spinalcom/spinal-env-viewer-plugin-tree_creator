@@ -230,10 +230,14 @@ var SpinalColorManager = class SpinalColorManager {
 
     for (var i = 0; i < children.length; i++) {
       let child = await children[i].getElement();
-      if (child.constructor.name == "AbstractElement" && !child.colorParams
-        .isVisible.get()) {
 
-        return false;
+      if (child.constructor.name == "AbstractElement") {
+        await this.verifyAbstractElement(child);
+
+        if (child.colorParams && !child.colorParams.isVisible.get()) {
+          return false;
+        }
+
 
       }
     }
