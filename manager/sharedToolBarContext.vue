@@ -166,7 +166,7 @@ export default {
 
           if (_self.context.name.get() != "logger") {
             this.getDbids(this.self, this.currentApp).then(dbids => {
-              // viewer.select(dbids);
+              viewer.select(dbids);
               // // for (let index = 0; index < dbids.length; index++) {
               // //   const element = dbids[index];
               // //   viewer.getProperties(element, r => {
